@@ -24,7 +24,7 @@ export default function Menupage({
   const categoryTabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [categoryBarHeight, setCategoryBarHeight] = useState(0);
   const [isStoreNoticeModalOpen, setIsStoreNoticeModalOpen] = useState(false);
-  const [isBottomModalOpen, setIsBottomModalOpen] = useState(true);
+  const [isBottomModalOpen, setIsBottomModalOpen] = useState(false);
   const [selectCategory, setSelectCategory] = useState(0);
   // const [scrollPosition, setScrollPosition] = useState(0);
   const isScrollingRef = useRef(false);
@@ -420,6 +420,24 @@ export default function Menupage({
       ) : (
         <></>
       )}
+      {/* {isBottomModalOpen ? (
+        <ModalBottomWindow
+          isOpen={isBottomModalOpen}
+          onClose={() => setIsBottomModalOpen(false)}
+        >
+          <CallStaff
+            staffMenu={data.categories}
+            selectStaffMenu={selectCategory}
+            onSelect={(index) => {
+              setSelectCategory(index);
+              scrollToCategory(index);
+              setIsBottomModalOpen(false);
+            }}
+          />
+        </ModalBottomWindow>
+      ) : (
+        <></>
+      )} */}
     </div>
   );
 }
@@ -485,6 +503,37 @@ export function CategoriesContent({
             key={index}
             className={`text-[1.1em] font-semibold py-[0.5em] text-left transition-colors ${
               selectCategory === index ? "text-[#3182F6]" : ""
+            }`}
+            onClick={() => onSelect(index)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function CallStaff({
+  staffMenu,
+  selectStaffMenu,
+  onSelect,
+}: {
+  staffMenu: string[];
+  selectStaffMenu: number;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div className="text-[16px] px-[2em] pb-[1em]">
+      <h1 className="text-[1.4em] font-bold mb-[1em] text-[#293448]">
+        무엇을 도와드릴까요?
+      </h1>
+      <div className="grid grid-cols-2 gap-[0.8em]">
+        {staffMenu.map((category, index) => (
+          <button
+            key={index}
+            className={`text-[1.1em] font-semibold py-[0.5em] text-left transition-colors ${
+              selectStaffMenu === index ? "text-[#3182F6]" : ""
             }`}
             onClick={() => onSelect(index)}
           >
