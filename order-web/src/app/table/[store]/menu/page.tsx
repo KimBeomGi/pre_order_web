@@ -192,7 +192,11 @@ export default function Menupage({
                       {product.category === value ? (
                         <li
                           className="flex flex-row items-center justify-between"
-                          onClick={() => {router.push(`/table/${resolvedParams.store}/menu/${product.id}`)}}
+                          onClick={() => {
+                            router.push(
+                              `/table/${resolvedParams.store}/menu/${product.id}`,
+                            );
+                          }}
                         >
                           <div className="w-[60%]">
                             {product.is_soldout ? (
@@ -279,8 +283,9 @@ export default function Menupage({
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           storeTitle="공지사항"
-          children={storeNotice()}
-        />
+        >
+          <StoreNotice />
+        </ModalWindow>
       ) : (
         <></>
       )}
@@ -288,26 +293,32 @@ export default function Menupage({
   );
 }
 
-export function storeNotice() {
+export function StoreNotice() {
   const data = storeData;
 
-  const statusColors: { [key: string]: { bg: string, text: string } } = {
-    "이벤트": { "bg": "#E6F7FF", "text": "#0091FF" },
-    "안내": { "bg": "#FFF7E6", "text": "#FFBA40" },
-    "휴무": { "bg": "#FFF2F0", "text": "#FF4D63" },
+  const statusColors: { [key: string]: { bg: string; text: string } } = {
+    이벤트: { bg: "#E6F7FF", text: "#0091FF" },
+    안내: { bg: "#FFF7E6", text: "#FFBA40" },
+    휴무: { bg: "#FFF2F0", text: "#FF4D63" },
   };
 
   return (
     <div className="text-[15px]">
       {data.notice.map((noticeItem, index) => {
-        const currentStyle = statusColors[noticeItem.status] || { bg: "#F5F5F5", text: "#666666" };
+        const currentStyle = statusColors[noticeItem.status] || {
+          bg: "#F5F5F5",
+          text: "#666666",
+        };
 
         return (
-          <div key={index} className="mb-4 bg-[#FFFFFF] p-[1em] space-y-[0.5em] rounded-[1em]">
+          <div
+            key={index}
+            className="mb-4 bg-[#FFFFFF] p-[1em] space-y-[0.5em] rounded-[1em]"
+          >
             <p
               className="py-[0.125em] px-[0.5em] rounded-[0.25em]"
-              style={{ 
-                backgroundColor: currentStyle.bg, 
+              style={{
+                backgroundColor: currentStyle.bg,
                 color: currentStyle.text,
                 display: "inline-block",
               }}
