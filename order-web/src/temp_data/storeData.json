@@ -1,0 +1,176 @@
+{
+  "is_recommend": true,
+  "recommend": [
+    {
+      "img_src": "/img/menu-order/recommend_menu_img_ex1.png",
+      "product_name": "로제 쉬림프 리조또",
+      "price": 12000,
+      "discount_rate": 0,
+      "id": 30
+    },
+    {
+      "img_src": "/img/menu-order/recommend_menu_img_ex2.png",
+      "product_name": "리코타레몬파스타",
+      "price": 15000,
+      "discount_rate": 0,
+      "id": 40
+    },
+    {
+      "img_src": "/img/menu-order/recommend_menu_img_ex3.png",
+      "product_name": "발사믹어니언 피자",
+      "price": 13000,
+      "discount_rate": 0,
+      "id": 50
+    }
+  ],
+  "categories": [
+    "리뷰 이벤트",
+    "세트메뉴",
+    "사이드메뉴",
+    "구이류",
+    "탕류"
+  ],
+  "store_info": {
+    "store_name": "지니푸드",
+    "store_address": "대구 북구 대구광역시 북구 침산남로9길 20",
+    "country_origin": [
+      "돈코츠라멘-돼지고기(국내산)",
+      "닭고기(국내산)",
+      "소고기(미국산)",
+      "김치(국내산)"
+    ]
+  },
+  "notice": [
+    {
+      "status": "안내",
+      "title": "화장실 위치",
+      "message": "매장 화장실은 나가서 바로 오른쪽에 있어요! 비밀번호는 안알려줄거지롱 메롱메롱메롱"
+    },
+    {
+      "status": "이벤트",
+      "title": "오픈 기념 전 메뉴 10% 할인",
+      "message": "4월 30일까지 모든 메뉴 10% 할인됩니다. 테이블오더로 주문 시 자동 적용. 2026.04.20 ~ 2026.04.30"
+    },
+    {
+      "status": "이벤트",
+      "title": "친구동반 할인",
+      "message": "커플? 친구? 동료? 누구나 같이 온다면 결제 시 1,000원 할인!"
+    },
+    {
+      "status": "안내",
+      "title": "주문 가능 시간",
+      "message": "런치 11:00 - 14:30 / 디너 17:00 - 21:00 (Last Order 20:30)"
+    },
+    {
+      "status": "휴무",
+      "title": "5월 5일 어린이날 휴무",
+      "message": "5월 5일(월)은 어린이날로 휴무입니다. 다음 날 정상 영업합니다."
+    }
+  ],
+  "menu": [
+    {
+      "category": "리뷰 이벤트",
+      "product_name": "리뷰쓰고 음료 1개 받기",
+      "price": 0,
+      "badge": true,
+      "badge_content": "네이버 리뷰 이벤트",
+      "badge_color": "#03CF5D",
+      "discount_rate": 0,
+      "description": "이벤트에 참여해주시면 주문 후 네이버 리뷰 링크가 발송돼요",
+      "img_src": "/img/menu-order/menu_img_ex1.png",
+      "is_soldout": false,
+      "id": 100
+    },
+    {
+      "category": "세트메뉴",
+      "product_name": "시그니처 치즈 쉬림프 세트1",
+      "price": 35000,
+      "badge": true,
+      "badge_content": "인기",
+      "badge_color": "#DA4352",
+      "discount_rate": 0,
+      "description": "누구나 좋아하는 치즈와 새우의 담백하고 깊은 맛",
+      "img_src": "/img/menu-order/menu_img_ex2.png",
+      "is_soldout": false,
+      "id": 101
+    },
+    {
+      "category": "세트메뉴",
+      "product_name": "시그니처 치즈 쉬림프 세트2",
+      "price": 40000,
+      "badge": false,
+      "badge_content": "",
+      "badge_color": "",
+      "discount_rate": 0,
+      "description": "누구나 좋아하는 치즈와 새우의 담백하고 깊은 맛(+++) ",
+      "img_src": "/img/menu-order/menu_img_ex3.png",
+      "is_soldout": false,
+      "id": 111
+    },
+    {
+      "category": "구이류",
+      "product_name": "정갈한 구운 생선 정식",
+      "price": 12000,
+      "badge": false,
+      "badge_content": "인기",
+      "badge_color": "#DA4352",
+      "discount_rate": 0,
+      "description": "너무 맛있어서 옆 동네 꼬마도 찾아와서 먹는 그 메뉴",
+      "img_src": "/img/menu-order/menu_img_ex4.png",
+      "is_soldout": false,
+      "id": 120
+    },
+    {
+      "category": "탕류",
+      "product_name": "일본에서 건너온 우동",
+      "price": 20000,
+      "badge": true,
+      "badge_content": "NEW",
+      "badge_color": "#6492FF",
+      "discount_rate": 0,
+      "description": "뜨끈하이 맛있는 우동",
+      "img_src": "/img/menu-order/menu_img_ex5.png",
+      "is_soldout": false,
+      "id": 16522
+    },
+    {
+      "category": "탕류",
+      "product_name": "여름에도 생각날 정도로 맛있는 오5555555555뎅탕",
+      "price": 16000,
+      "badge": true,
+      "badge_content": "NEW",
+      "badge_color": "#6492FF",
+      "discount_rate": 0,
+      "description": "깊은 국물의 맛에 술과 함께하면 첫차 타고 가야지.",
+      "img_src": "/img/menu-order/menu_img_ex6.png",
+      "is_soldout": false,
+      "id": 1123231
+    },
+    {
+      "category": "사이드메뉴",
+      "product_name": "이건못참치후토마끼",
+      "price": 8000,
+      "badge": true,
+      "badge_content": "NEW",
+      "badge_color": "#6492FF",
+      "discount_rate": 0,
+      "description": "마이쪙",
+      "img_src": "/img/menu-order/menu_img_ex7.png",
+      "is_soldout": true,
+      "id": 251646
+    },
+    {
+      "category": "사이드메뉴",
+      "product_name": "이건못참치초?밥?",
+      "price": 12000,
+      "badge": false,
+      "badge_content": "",
+      "badge_color": "",
+      "discount_rate": 0,
+      "description": "마이쪙",
+      "img_src": "",
+      "is_soldout": false,
+      "id": 5891456
+    }
+  ]
+}
