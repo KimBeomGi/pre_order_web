@@ -16,11 +16,105 @@ export default function Menupage({
   const data = storeData;
   const resolvedParams = use(params);
   const store = decodeURIComponent(resolvedParams.store);
-
   const router = useRouter();
+  const categoryRefs = useRef<(HTMLHeadingElement | null)[]>([]);
+  const categoryBarRef = useRef<HTMLDivElement | null>(null);
+  const categoryContentRef = useRef<HTMLDivElement | null>(null);
+  const categoryTabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [categoryBarHeight, setCategoryBarHeight] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [selectCategory, setSelectCategory] = useState(0);
+  // const [scrollPosition, setScrollPosition] = useState(0);
+  const isScrollingRef = useRef(false);
+
+  ////////////// 카테고리 관련 코드 시작
+  useEffect(() => {
+    if (!categoryBarRef.current) return;
+
+    setCategoryBarHeight(categoryBarRef.current.offsetHeight);
+  }, []);
+
+  // 카테고리바에서 카테고리를 선택하면, 해당 부분으로 이동하되, 가려지는 부분이 없도록
+  const scrollToCategory = (index: number) => {
+    const target = categoryRefs.current[index];
+    if (!target) return;
+
+    const targetTop = target.getBoundingClientRect().top + window.scrollY;
+
+    isScrollingRef.current = true; // 자동 스크롤 시작
+
+    window.scrollTo({
+      top: targetTop - categoryBarHeight,
+      behavior: "smooth",
+    });
+  };
+
+  const categoryToCenter = (index: number) => {
+    const container = categoryContentRef.current;
+    const tab = categoryTabRefs.current[index];
+
+    if (!container || !tab) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const tabRect = tab.getBoundingClientRect();
+
+    // 스크롤이 위치해야하는곳
+    const scrollLeft =
+      container.scrollLeft -
+      containerRect.left -
+      containerRect.width / 2 +
+      tabRect.left +
+      tabRect.width / 2;
+
+    container.scrollTo({
+      left: scrollLeft,
+      behavior: "smooth",
+    });
+  };
+
+  // selectCategory가 변경될 때마다 탭을 중앙으로 정렬 (스크롤 이동은 클릭 시에만 별도로 호출)
+  useEffect(() => {
+    categoryToCenter(selectCategory);
+  }, [selectCategory]);
+
+  // 스크롤의 위치에 따라 selectCategory가 달라지게 되어야해!
+  // 스크롤 위치 찾기
+  const handleCategoryByScrollPosition = () => {
+    if (isScrollingRef.current) return; // 자동 스크롤 중이면 감지 생략
+
+    let activeIndex = 0;
+    
+    // 각 카테고리 섹션의 위치를 확인
+    categoryRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const rect = ref.getBoundingClientRect();
+        // 카테고리 헤더가 카테고리 바(sticky) 바로 아래에 오거나 그보다 위에 있을 때
+        if (rect.top <= categoryBarHeight + 20) {
+          activeIndex = index;
+        }
+      }
+    });
+
+    if (activeIndex !== selectCategory) {
+      setSelectCategory(activeIndex);
+    }
+  };
+
+  useEffect(() => {
+    const handleScrollEnd = () => {
+      isScrollingRef.current = false; // 스크롤 종료 시 감지 재활성화
+    };
+
+    window.addEventListener("scroll", handleCategoryByScrollPosition);
+    window.addEventListener("scrollend", handleScrollEnd);
+
+    return () => {
+      window.removeEventListener("scroll", handleCategoryByScrollPosition);
+      window.removeEventListener("scrollend", handleScrollEnd);
+    };
+  }, [categoryBarHeight, selectCategory]); // 의존성 추가
+
+  ////////////// 카테고리 관련 코드 끝
 
   return (
     <div className="bg-[#ECEDEF]">
@@ -55,7 +149,7 @@ export default function Menupage({
             </div>
             <div className="text-[15px] mt-[0.8em] flex flex-row justify-between">
               <h2 className="text-[2em] font-extrabold">
-                {data["store_info"]["store_name"]}
+                {/* {data["store_info"]["store_name"]} */}
                 {store}
               </h2>
               <div className="flex flex-row gap-x-[0.5em]">
@@ -145,21 +239,31 @@ export default function Menupage({
         {/* 메뉴 전체 */}
         <div className="text-[15px]">
           {/* 카테고리 및 검색 */}
-          <div className="flex flex-row items-center justify-between pl-[0.66667em] pr-[1em] bg-[#FFFFFF]">
+          <div
+            ref={categoryBarRef}
+            className="flex flex-row items-center justify-between pl-[0.66667em] pr-[1em] bg-[#FFFFFF] sticky top-0 z-10"
+          >
             <button
               className="text-[1.2em] text-[#373737] px-[0.66667em] py-[0.27778em] bg-[#F5F5F5] rounded-[0.55556em]"
               onClick={() => {}}
             >
               <FaMagnifyingGlass />
             </button>
-            <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
+            <div
+              ref={categoryContentRef}
+              className="overflow-x-auto overflow-y-hidden no-scrollbar"
+            >
               <div className="flex flex-row">
                 {data["categories"].map((value, key) => (
                   <div
                     className={`shrink-0 text-[1.2em] border-b-2  p-[0.55556em] ${selectCategory === key ? "border-[#293448]" : "border-[#ECEDEF]"}`}
                     key={key}
+                    ref={(el) => {
+                      categoryTabRefs.current[key] = el;
+                    }}
                     onClick={() => {
                       setSelectCategory(key);
+                      scrollToCategory(key);
                     }}
                   >
                     <p
@@ -184,7 +288,12 @@ export default function Menupage({
               {/* 각 카테고리 별로 가능하게 div만들어두고 그 div안에서 확인 */}
               {data["categories"].map((value, key) => (
                 <ul key={key} className="bg-[#FFFFFF] px-[1.6em] py-[1.6em]">
-                  <h4 className="text-[1.2em] font-bold text-[#293448]">
+                  <h4
+                    className="text-[1.2em] font-bold text-[#293448]"
+                    ref={(el) => {
+                      categoryRefs.current[key] = el;
+                    }}
+                  >
                     {value}
                   </h4>
                   {data["menu"].map((product, menu_key) => (
