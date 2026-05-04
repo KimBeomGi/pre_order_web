@@ -178,6 +178,7 @@ export function PushNotificationManager() {
 //   );
 // }
 export function InstallPrompt() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {

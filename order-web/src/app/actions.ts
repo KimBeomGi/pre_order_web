@@ -23,7 +23,8 @@ export async function unsubscribeUser() {
   // For example: await db.subscriptions.delete({ where: { ... } })
   return { success: true }
 }
- 
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function sendNotification(message: string, sub:any) {
   // if (!subscription) {
   //   throw new Error('No subscription available')
