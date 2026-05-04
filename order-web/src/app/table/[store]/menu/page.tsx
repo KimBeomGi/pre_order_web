@@ -5,6 +5,7 @@ import { FaChevronDown } from "react-icons/fa6";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import ModalWindow from "@/components/ModalWindow";
 import storeData from "@/temp_data/storeData.json";
+import ModalBottomWindow from "@/components/ModalBottomWindow";
 
 // import Image from 'next/image'
 
@@ -22,7 +23,8 @@ export default function Menupage({
   const categoryContentRef = useRef<HTMLDivElement | null>(null);
   const categoryTabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [categoryBarHeight, setCategoryBarHeight] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStoreNoticeModalOpen, setIsStoreNoticeModalOpen] = useState(false);
+  const [isBottomModalOpen, setIsBottomModalOpen] = useState(true);
   const [selectCategory, setSelectCategory] = useState(0);
   // const [scrollPosition, setScrollPosition] = useState(0);
   const isScrollingRef = useRef(false);
@@ -83,7 +85,7 @@ export default function Menupage({
     if (isScrollingRef.current) return; // 자동 스크롤 중이면 감지 생략
 
     let activeIndex = 0;
-    
+
     // 각 카테고리 섹션의 위치를 확인
     categoryRefs.current.forEach((ref, index) => {
       if (ref) {
@@ -183,7 +185,7 @@ export default function Menupage({
               <div
                 className="text-[15px] bg-[#F2F3F6] rounded-[1.53333em] flex flex-row gap-x-[0.5em] py-[0.66667em] px-[1em] mt-[1.8em]"
                 onClick={() => {
-                  setIsModalOpen(!isModalOpen);
+                  setIsStoreNoticeModalOpen(!isStoreNoticeModalOpen);
                 }}
               >
                 <img
@@ -277,7 +279,9 @@ export default function Menupage({
             </div>
             <button
               className="bg-[#F2F3F6] rounded-full p-[0.4em]"
-              onClick={() => {}}
+              onClick={() => {
+                setIsBottomModalOpen(!isBottomModalOpen);
+              }}
             >
               <FaChevronDown className="text-[0.8em] text-[#848E9A]" />
             </button>
@@ -387,14 +391,32 @@ export default function Menupage({
           </div>
         </div>
       </div>
-      {isModalOpen ? (
+      {isStoreNoticeModalOpen ? (
         <ModalWindow
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isStoreNoticeModalOpen}
+          onClose={() => setIsStoreNoticeModalOpen(false)}
           storeTitle="공지사항"
         >
           <StoreNotice />
         </ModalWindow>
+      ) : (
+        <></>
+      )}
+      {isBottomModalOpen ? (
+        <ModalBottomWindow
+          isOpen={isBottomModalOpen}
+          onClose={() => setIsBottomModalOpen(false)}
+        >
+          <CategoriesContent
+            categories={data.categories}
+            selectCategory={selectCategory}
+            onSelect={(index) => {
+              setSelectCategory(index);
+              scrollToCategory(index);
+              setIsBottomModalOpen(false);
+            }}
+          />
+        </ModalBottomWindow>
       ) : (
         <></>
       )}
@@ -439,6 +461,37 @@ export function StoreNotice() {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+export function CategoriesContent({
+  categories,
+  selectCategory,
+  onSelect,
+}: {
+  categories: string[];
+  selectCategory: number;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div className="text-[16px] px-[2em] pb-[1em]">
+      <h1 className="text-[1.4em] font-bold mb-[1em] text-[#293448]">
+        카테고리를 선택해주세요
+      </h1>
+      <div className="grid grid-cols-2 gap-[0.8em]">
+        {categories.map((category, index) => (
+          <button
+            key={index}
+            className={`text-[1.1em] font-semibold py-[0.5em] text-left transition-colors ${
+              selectCategory === index ? "text-[#3182F6]" : ""
+            }`}
+            onClick={() => onSelect(index)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
