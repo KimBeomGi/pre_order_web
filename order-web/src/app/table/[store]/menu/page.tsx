@@ -166,7 +166,7 @@ export default function Menupage({
   }
 
   return (
-    <div className="bg-[#ECEDEF] text-[15px] relative">
+    <div className="bg-[#ECEDEF] text-[15px] relative w-full">
       {/* 상단 커버 이미지 */}
       <div className="relative z-0">
         <img
@@ -216,7 +216,7 @@ export default function Menupage({
                       />
                     </li>
                   </ul>
-                  <p>{coViewerCount}명이 함게 주문하고 있어요!</p>
+                  <p>{coViewerCount}명이 함께 주문하고 있어요!</p>
                 </div>
               </div>
               {/* 주문내역 */}
@@ -390,7 +390,7 @@ export default function Menupage({
                     <Fragment key={menu_key}>
                       {product.category === value ? (
                         <li
-                          className="flex flex-row items-center justify-between"
+                          className="flex flex-row items-center justify-between py-[1em] border-b border-b-[#ECEDEF] last:border-b-0"
                           onClick={() => {
                             router.push(
                               `/table/${resolvedParams.store}/menu/${product.id}`,
@@ -400,14 +400,14 @@ export default function Menupage({
                           <div className="w-[60%]">
                             {product.is_soldout ? (
                               <div
-                                className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mt-[1em] mb-[0.5em]`}
+                                className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
                                 style={{ backgroundColor: "#525A67" }}
                               >
                                 품절
                               </div>
                             ) : product.badge ? (
                               <div
-                                className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mt-[1em] mb-[0.5em]`}
+                                className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
                                 style={{ backgroundColor: product.badge_color }}
                               >
                                 {product.badge_content}
@@ -460,8 +460,8 @@ export default function Menupage({
         </div>
         {/* 가게정보 원산지 */}
         {/* 장바구니에 물건이 담기면 mb-[6em]이 추가 되어야함. */}
-        {/* <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em] mb-[6em]"> */}
-        <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em]">
+        <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em] mb-[6em]">
+        {/* <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em]"> */}
           <h2 className="text-[1.2em] font-semibold text-[#4C5868]">
             가게 정보 · 원산지
           </h2>
@@ -534,7 +534,7 @@ export default function Menupage({
 
       {/* 장바구니 보기 버튼 */}
       <div
-        className="fixed left-1/2 -translate-x-1/2 py-[0.5em] bottom-[1em] rounded-[0.5em] w-[90%] bg-[#222F4A] flex justify-center items-center gap-x-[1em]"
+        className="fixed left-1/2 -translate-x-1/2 py-[0.5em] bottom-[1em] rounded-[0.5em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[1em]"
         onClick={() => {}}
       >
         <div className="bg-[#FFFFFF] w-[2em] h-[2em] flex justify-center items-center rounded-[0.4em]">

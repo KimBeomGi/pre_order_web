@@ -93,7 +93,7 @@ export default function ModalBottomWindow({
 
       {/* 모달 창 본체 */}
       <div
-        className={`relative max-md:w-[390px] w-[98%] max-h-[94%] bg-[#FFFFFF] rounded-[1em] mb-[1em] shadow-2xl touch-none`}
+        className={`relative w-[98%] max-w-[392px] max-h-[94%] bg-[#FFFFFF] rounded-[1em] mb-[1em] shadow-2xl touch-none mx-auto`}
         style={{
           transform: `translateY(${dragY}px)`,
           transition: isDragging ? "none" : "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.127)", // 쫀득한 Spring 느낌의 베지어 곡선

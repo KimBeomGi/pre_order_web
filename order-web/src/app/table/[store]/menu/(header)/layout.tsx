@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from "next/navigation";
 import { IoChevronBack } from "react-icons/io5";
 
 export default function storeHeaderLayout({
@@ -6,10 +7,12 @@ export default function storeHeaderLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  
   return (
-    <section className="">
+    <section className="text-[16px]">
       <div className="bg-[#FFFFFF] flex flex-row justify-between items-center pl-[1em] pr-[2em] pt-[1em] pb-[1.25em]">
-        <IoChevronBack  className="text-[2em]"/>
+        <IoChevronBack  className="text-[2em]" onClick={() => {router.back()}} />
         <div
           className="relative inline-block"
         >

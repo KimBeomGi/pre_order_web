@@ -39,7 +39,7 @@ export default function ModalWindow({
       />
 
       {/* 모달 창 본체 */}
-      <div className="relative w-[90%] max-h-[94%] bg-[#F2F3F6] rounded-[1em] p-[1em] shadow-xl">
+      <div className="relative w-[90%] max-w-[360px] max-h-[94%] bg-[#F2F3F6] rounded-[1em] p-[1em] shadow-xl">
         {/* 헤더 섹션 */}
         <div className="flex items-center justify-between pb-[1em]">
           <p className="font-bold text-[1.6em]">{storeTitle}</p>
