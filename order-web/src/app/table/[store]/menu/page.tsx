@@ -4,8 +4,10 @@ import { Fragment, useEffect, useRef, useState, use } from "react";
 import { FaChevronDown } from "react-icons/fa6";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import ModalWindow from "@/components/ModalWindow";
-import storeData from "@/temp_data/storeData.json";
 import ModalBottomWindow from "@/components/ModalBottomWindow";
+import { getStoreData } from "@/app/api/store";
+import { StoreData } from "@/types/store";
+import axios from "axios";
 
 // import Image from 'next/image'
 
@@ -14,7 +16,6 @@ export default function Menupage({
 }: {
   params: Promise<{ store: string }>;
 }) {
-  const data = storeData;
   const resolvedParams = use(params);
   const store = decodeURIComponent(resolvedParams.store);
   const router = useRouter();
@@ -24,19 +25,38 @@ export default function Menupage({
   const categoryTabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [categoryBarHeight, setCategoryBarHeight] = useState(0);
   const [isStoreNoticeModalOpen, setIsStoreNoticeModalOpen] = useState(false);
-  const [isBottomModalOpen, setIsBottomModalOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isCallStaffModalOpen, setIsCallStaffModalOpen] = useState(false);
   const [selectCategory, setSelectCategory] = useState(0);
+  const [selectStaffMenu, setSelectStaffMenu] = useState(0);
+  const [staffMenu, setStaffMenu] = useState<string[]>(["직원호출"]);
   // const [scrollPosition, setScrollPosition] = useState(0);
   const isScrollingRef = useRef(false);
 
+  const [orderDetails, setOrderDetails] = useState(2);
+  const [coViewerCount, setCoViewerCount] = useState(0);
+  const [storeData, setStoreData] = useState<StoreData | null>(null);
+
+  const getAPIStoreData = async () => {
+    try {
+      const response = await getStoreData();
+      setStoreData(response); // 가게 정보 설정
+      setStaffMenu((prev) => [...prev, ...(response?.staff_menu ?? [])]); // 직원호출 내역 입력
+    } catch (error) {
+      console.log("연결에 실패했습니다.");
+    }
+  };
+
   ////////////// 카테고리 관련 코드 시작
   useEffect(() => {
+    // 데이터 먼저 가져오기
+    getAPIStoreData();
     if (!categoryBarRef.current) return;
 
     setCategoryBarHeight(categoryBarRef.current.offsetHeight);
   }, []);
 
-  // 카테고리바에서 카테고리를 선택하면, 해당 부분으로 이동하되, 가려지는 부분이 없도록
+  // 카테고리바에서 카테고리를 선택하면, 해당 부분으로 이동하되, 가려지는 부분이 없도록 하는 함수
   const scrollToCategory = (index: number) => {
     const target = categoryRefs.current[index];
     if (!target) return;
@@ -51,6 +71,7 @@ export default function Menupage({
     });
   };
 
+  // 카테고리 바에서 카테고리를 선택하면 해당 부분이 중앙으로 옮겨지는 함수
   const categoryToCenter = (index: number) => {
     const container = categoryContentRef.current;
     const tab = categoryTabRefs.current[index];
@@ -118,8 +139,34 @@ export default function Menupage({
 
   ////////////// 카테고리 관련 코드 끝
 
+  async function requireCallStaff(content: { [key: string]: number }) {
+    try {
+      // const response = await axios.post("/api/call-staff", {
+      //   store,
+      //   table: "TABLE 01",
+      //   content,
+      // });
+      console.log(content);
+
+      // if (response.status === 200) {
+      //   alert("요청이 전송되었습니다.");
+      // }
+    } catch (error) {
+      console.error("직원 호출 실패:", error);
+    }
+  }
+
+  //////////////////////////////////////////////// 이하 렌더링 코드
+  if (!storeData) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        로딩 중...
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-[#ECEDEF]">
+    <div className="bg-[#ECEDEF] text-[15px] relative">
       {/* 상단 커버 이미지 */}
       <div className="relative z-0">
         <img
@@ -129,42 +176,81 @@ export default function Menupage({
         />
       </div>
       {/* 보이는 구간 */}
-      <div className="relative z-10 -mt-[20px]">
+      <div className="relative z-0 -mt-[20px]">
         {/* 메인 */}
         <div className="bg-[#FFFFFF] rounded-t-[20px]">
           {/* 상단 공지사항 까지 */}
           <div className="px-[22px] pt-[30px]">
             <div className="flex flex-row justify-between text-[15px]">
-              {/* 직원호출 버튼 */}
-              <button
-                className="font-semibold w-fit px-[0.6em] py-[0.46667em] rounded-[0.3334em] border-[#E5E5E5] border border-solid flex flex-row justify-center items-center gap-x-[0.6em]"
-                onClick={() => {}}
-              >
-                <img
-                  className="w-[1.13334em]"
-                  src="/img/chime_bell_icon.png"
-                  alt=""
-                />
-                직원호출
-              </button>
-              <p className="">테이블 : 1번 테이블</p>
-            </div>
-            <div className="text-[15px] mt-[0.8em] flex flex-row justify-between">
-              <h2 className="text-[2em] font-extrabold">
-                {/* {data["store_info"]["store_name"]} */}
-                {store}
-              </h2>
-              <div className="flex flex-row gap-x-[0.5em]">
+              {/* 주문내역 */}
+              <div>
+                {/* 직원호출 버튼 */}
                 <button
                   className="font-semibold w-fit px-[0.6em] py-[0.46667em] rounded-[0.3334em] border-[#E5E5E5] border border-solid flex flex-row justify-center items-center gap-x-[0.6em]"
-                  onClick={() => {}}
+                  onClick={() => {
+                    setIsCallStaffModalOpen(true);
+                  }}
                 >
                   <img
-                    className="w-[1.2em]"
+                    className="w-[1.13334em]"
+                    src="/img/chime_bell_icon.png"
+                    alt=""
+                  />
+                  직원호출
+                </button>
+                {/* <p className="">테이블 : 1번 테이블</p> */}
+                <div className="flex flex-row items-center gap-[0.5em] mt-[0.8em]">
+                  <ul className="flex flex-row items-center -space-x-[0.5em]">
+                    <li className="flex items-center justify-center w-[1.6666667em] h-[1.6666667em] bg-[#D9D9D96E] rounded-full">
+                      <img
+                        className="w-[0.8em]"
+                        src="/img/person_icon.png"
+                        alt=""
+                      />
+                    </li>
+                    <li className="flex items-center justify-center w-[1.6666667em] h-[1.6666667em] bg-[#D9D9D96E] rounded-full">
+                      <img
+                        className="w-[0.8em]"
+                        src="/img/person_icon.png"
+                        alt=""
+                      />
+                    </li>
+                  </ul>
+                  <p>{coViewerCount}명이 함게 주문하고 있어요!</p>
+                </div>
+              </div>
+              {/* 주문내역 */}
+              <div>
+                <div
+                  className="relative"
+                  onClick={() => {
+                    console.log("주문내역");
+                  }}
+                >
+                  <img
+                    className="w-[29px]"
                     src="/img/order_details_icon.png"
                     alt=""
                   />
-                </button>
+                  {orderDetails > 0 ? (
+                    <div className="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2  flex justify-center items-center w-[1.3333333em] h-[1.3333333em] bg-[#EF4444] text-[#FFFFFF] font-bold rounded-full">
+                      <p className="leading-1">{orderDetails}</p>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="text-[15px] mt-[0.8em] flex flex-row justify-between">
+              <div className="flex flex-row items-end justify-center gap-[0.5em]">
+                <h2 className="text-[2em] font-extrabold">
+                  {/* {data["store_info"]["store_name"]} */}
+                  {store}
+                </h2>
+                <p className="">TABLE 01</p>
+              </div>
+              <div className="flex flex-row gap-x-[0.5em]">
                 <button
                   className="font-semibold w-fit px-[0.6em] py-[0.46667em] rounded-[0.3334em] border-[#E5E5E5] border border-solid flex flex-row justify-center items-center gap-x-[0.6em] rounded-[0.3333em]"
                   onClick={() => {}}
@@ -194,15 +280,15 @@ export default function Menupage({
                   alt=""
                 />
                 <p className="text-[0.93333em]">
-                  {data.notice[0].message.length > 28
-                    ? data.notice[0].message.slice(0, 28) + "..."
-                    : data.notice[0].message}
+                  {storeData?.notice[0].message.length > 28
+                    ? storeData?.notice[0].message.slice(0, 28) + "..."
+                    : storeData?.notice[0].message}
                 </p>
               </div>
             </div>
           </div>
           {/* 추천메뉴 */}
-          {data.is_recommend ? (
+          {storeData?.is_recommend ? (
             <div className="text-[15px]">
               <div className="flex flex-row items-center gap-x-[0.6em] ml-[1em] mb-[1em]">
                 <span className="font-bold text-[1.2em] text-[#2A5BAD]">
@@ -215,7 +301,7 @@ export default function Menupage({
               <div className="w-full">
                 <div className="overflow-hidden w-full">
                   <div className="flex flex-row gap-x-[0.3333em]">
-                    {data["recommend"].map((value, key) => (
+                    {storeData["recommend"].map((value, key) => (
                       <div key={key} className="w-1/3">
                         <img
                           className="w-full h-[94px] object-cover"
@@ -256,7 +342,7 @@ export default function Menupage({
               className="overflow-x-auto overflow-y-hidden no-scrollbar"
             >
               <div className="flex flex-row">
-                {data["categories"].map((value, key) => (
+                {storeData["categories"].map((value, key) => (
                   <div
                     className={`shrink-0 text-[1.2em] border-b-2  p-[0.55556em] ${selectCategory === key ? "border-[#293448]" : "border-[#ECEDEF]"}`}
                     key={key}
@@ -280,7 +366,7 @@ export default function Menupage({
             <button
               className="bg-[#F2F3F6] rounded-full p-[0.4em]"
               onClick={() => {
-                setIsBottomModalOpen(!isBottomModalOpen);
+                setIsCategoryModalOpen(!isCategoryModalOpen);
               }}
             >
               <FaChevronDown className="text-[0.8em] text-[#848E9A]" />
@@ -290,7 +376,7 @@ export default function Menupage({
           <div className="text-[15px]">
             <div className="flex flex-col gap-y-[1em]">
               {/* 각 카테고리 별로 가능하게 div만들어두고 그 div안에서 확인 */}
-              {data["categories"].map((value, key) => (
+              {storeData["categories"].map((value, key) => (
                 <ul key={key} className="bg-[#FFFFFF] px-[1.6em] py-[1.6em]">
                   <h4
                     className="text-[1.2em] font-bold text-[#293448]"
@@ -300,7 +386,7 @@ export default function Menupage({
                   >
                     {value}
                   </h4>
-                  {data["menu"].map((product, menu_key) => (
+                  {storeData["menu"].map((product, menu_key) => (
                     <Fragment key={menu_key}>
                       {product.category === value ? (
                         <li
@@ -373,21 +459,23 @@ export default function Menupage({
           </div>
         </div>
         {/* 가게정보 원산지 */}
+        {/* 장바구니에 물건이 담기면 mb-[6em]이 추가 되어야함. */}
+        {/* <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em] mb-[6em]"> */}
         <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em]">
           <h2 className="text-[1.2em] font-semibold text-[#4C5868]">
             가게 정보 · 원산지
           </h2>
           <div className="text-[#697584]">
             <p>상호명</p>
-            <p>{data["store_info"]["store_name"]}</p>
+            <p>{storeData["store_info"]["store_name"]}</p>
           </div>
           <div className="text-[#697584]">
             <p>가게주소</p>
-            <p>{data["store_info"]["store_address"]}</p>
+            <p>{storeData["store_info"]["store_address"]}</p>
           </div>
           <div className="text-[#697584]">
             <p>원산지</p>
-            <p>{data["store_info"]["country_origin"].join(", ")}</p>
+            <p>{storeData["store_info"]["country_origin"].join(", ")}</p>
           </div>
         </div>
       </div>
@@ -397,54 +485,74 @@ export default function Menupage({
           onClose={() => setIsStoreNoticeModalOpen(false)}
           storeTitle="공지사항"
         >
-          <StoreNotice />
+          <StoreNotice noticeData={storeData.notice} />
         </ModalWindow>
       ) : (
         <></>
       )}
-      {isBottomModalOpen ? (
+      {isCategoryModalOpen ? (
         <ModalBottomWindow
-          isOpen={isBottomModalOpen}
-          onClose={() => setIsBottomModalOpen(false)}
+          isOpen={isCategoryModalOpen}
+          onClose={() => setIsCategoryModalOpen(false)}
         >
           <CategoriesContent
-            categories={data.categories}
+            categories={storeData.categories}
             selectCategory={selectCategory}
             onSelect={(index) => {
               setSelectCategory(index);
               scrollToCategory(index);
-              setIsBottomModalOpen(false);
+              setIsCategoryModalOpen(false);
             }}
           />
         </ModalBottomWindow>
       ) : (
         <></>
       )}
-      {/* {isBottomModalOpen ? (
+      {isCallStaffModalOpen ? (
         <ModalBottomWindow
-          isOpen={isBottomModalOpen}
-          onClose={() => setIsBottomModalOpen(false)}
+          isOpen={isCallStaffModalOpen}
+          onClose={() => setIsCallStaffModalOpen(false)}
         >
           <CallStaff
-            staffMenu={data.categories}
-            selectStaffMenu={selectCategory}
+            staffMenu={staffMenu}
+            selectStaffMenu={selectStaffMenu}
             onSelect={(index) => {
-              setSelectCategory(index);
-              scrollToCategory(index);
-              setIsBottomModalOpen(false);
+              setSelectStaffMenu(index);
+            }}
+            onClose={() => {
+              setIsCallStaffModalOpen(false);
+            }}
+            onRequest={(data) => {
+              requireCallStaff(data);
+              setIsCallStaffModalOpen(false);
             }}
           />
         </ModalBottomWindow>
       ) : (
         <></>
-      )} */}
+      )}
+
+      {/* 장바구니 보기 버튼 */}
+      <div
+        className="fixed left-1/2 -translate-x-1/2 py-[0.5em] bottom-[1em] rounded-[0.5em] w-[90%] bg-[#222F4A] flex justify-center items-center gap-x-[1em]"
+        onClick={() => {}}
+      >
+        <div className="bg-[#FFFFFF] w-[2em] h-[2em] flex justify-center items-center rounded-[0.4em]">
+          <p className="font-semibold text-[1.333333em]">3</p>
+        </div>
+        <p className="font-semibold text-[1.33333em] text-[#FFFFFF]">
+          65,000원 장바구니 보기
+        </p>
+      </div>
     </div>
   );
 }
 
-export function StoreNotice() {
-  const data = storeData;
-
+export function StoreNotice({
+  noticeData,
+}: {
+  noticeData: { status: string; title: string; message: string }[];
+}) {
   const statusColors: { [key: string]: { bg: string; text: string } } = {
     이벤트: { bg: "#E6F7FF", text: "#0091FF" },
     안내: { bg: "#FFF7E6", text: "#FFBA40" },
@@ -453,7 +561,7 @@ export function StoreNotice() {
 
   return (
     <div className="text-[15px]">
-      {data.notice.map((noticeItem, index) => {
+      {noticeData.map((noticeItem, index) => {
         const currentStyle = statusColors[noticeItem.status] || {
           bg: "#F5F5F5",
           text: "#666666",
@@ -518,28 +626,128 @@ export function CallStaff({
   staffMenu,
   selectStaffMenu,
   onSelect,
+  onClose,
+  onRequest,
 }: {
   staffMenu: string[];
   selectStaffMenu: number;
   onSelect: (index: number) => void;
+  onClose: () => void;
+  onRequest: (data: { [key: string]: number }) => void;
 }) {
+  const [menuCount, setMenuCount] = useState<{ [key: number]: number }>(
+    staffMenu.reduce((acc, _, i) => ({ ...acc, [i]: 0 }), {}),
+  );
+
+  const handleCountChange = (index: number, delta: number) => {
+    setMenuCount((prev) => ({
+      ...prev,
+      [index]: Math.max(0, (prev[index] || 0) + delta),
+    }));
+  };
+
+  const handleToggle = (index: number) => {
+    const delta = menuCount[index] > 0 ? -1 : 1;
+    handleCountChange(index, delta);
+  };
+
+  const handleSubmit = () => {
+    const requestData = staffMenu.reduce(
+      (acc, menu, index) => {
+        const count = menuCount[index] || 0;
+        if (count > 0) {
+          acc[menu] = count;
+        }
+        return acc;
+      },
+      {} as { [key: string]: number },
+    );
+    onRequest(requestData);
+  };
+
+  const isRequestable = Object.values(menuCount).some((count) => count > 0);
+
   return (
-    <div className="text-[16px] px-[2em] pb-[1em]">
+    <div className="text-[16px] px-[1.25em] pb-[1em]">
       <h1 className="text-[1.4em] font-bold mb-[1em] text-[#293448]">
         무엇을 도와드릴까요?
       </h1>
-      <div className="grid grid-cols-2 gap-[0.8em]">
-        {staffMenu.map((category, index) => (
-          <button
+      <ul className="grid grid-cols-1 gap-y-[0.8em] max-h-[10em] overflow-auto mb-[1em]">
+        {staffMenu.map((menu, index) => (
+          <li
             key={index}
-            className={`text-[1.1em] font-semibold py-[0.5em] text-left transition-colors ${
-              selectStaffMenu === index ? "text-[#3182F6]" : ""
+            className={`flex flex-row items-center justify-between py-[0.5em] pl-[1em] pr-[0.5em] rounded-[0.666667em] transition-colors ${
+              menuCount[index] > 0 ? "bg-[#E8F3FF]" : "bg-[#F2F4F6]"
             }`}
-            onClick={() => onSelect(index)}
+            onClick={() => {
+              onSelect(index);
+              if (menu === "직원호출") handleToggle(index);
+            }}
           >
-            {category}
-          </button>
+            <p
+              className={`text-[1em] font-semibold text-left ${menuCount[index] > 0 ? "text-[#3182F6]" : "text-[#293448]"}`}
+            >
+              {menu}
+            </p>
+            {menu === "직원호출" ? (
+              <div className="flex flex-row items-center w-[6em] justify-around">
+                <span
+                  className={`w-[1.5em] h-[1.5em] rounded-full flex items-center justify-center shadow-sm font-bold transition-colors ${
+                    menuCount[index] > 0
+                      ? "bg-[#3182F6] text-white"
+                      : "bg-[#FFFFFF] text-[#D1D1D1]"
+                  }`}
+                >
+                  {menuCount[index] > 0 ? "✓" : ""}
+                </span>
+              </div>
+            ) : (
+              <div
+                className="flex flex-row items-center w-[6em] justify-around"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  className="w-[1.5em] h-[1.5em] bg-[#FFFFFF] rounded-full flex items-center justify-center shadow-sm font-bold active:scale-95"
+                  onClick={() => handleCountChange(index, -1)}
+                >
+                  -
+                </button>
+                <span className="min-w-[1em] text-center font-bold">
+                  {menuCount[index] || 0}
+                </span>
+                <button
+                  className="w-[1.5em] h-[1.5em] bg-[#FFFFFF] rounded-full flex items-center justify-center shadow-sm font-bold active:scale-95"
+                  onClick={() => handleCountChange(index, 1)}
+                >
+                  +
+                </button>
+              </div>
+            )}
+          </li>
         ))}
+      </ul>
+      <div className="left-0 w-full flex flex-row justify-between items-center gap-x-[0.5em] text-[1.25em]">
+        <button
+          className="w-full font-semibold rounded-[0.625em] py-[1em] bg-[#F2F4F6]"
+          onClick={() => {
+            onClose();
+          }}
+        >
+          닫기
+        </button>
+        <button
+          className={`w-full font-semibold rounded-[0.625em] py-[1em] transition-colors ${
+            isRequestable
+              ? "bg-[#3182F6] text-white"
+              : "bg-[#222F49B5] text-[#FFFFFFB2] opacity-50 cursor-not-allowed"
+          }`}
+          onClick={() => {
+            if (isRequestable) handleSubmit();
+          }}
+          disabled={!isRequestable}
+        >
+          요청하기
+        </button>
       </div>
     </div>
   );

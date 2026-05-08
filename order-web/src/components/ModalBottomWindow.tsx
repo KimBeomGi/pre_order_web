@@ -36,7 +36,8 @@ export default function ModalBottomWindow({
 
   const handleClose = () => {
     setIsClosing(true);
-    setDragY(window.innerHeight); // 화면 아래로 완전히 밀어내기
+    const height = typeof window !== "undefined" ? window.innerHeight : 1000;
+    setDragY(height); // 화면 아래로 완전히 밀어내기
     setTimeout(() => {
       onClose();
     }, 300); // 애니메이션 시간(0.3s) 후에 실제 닫기 호출
@@ -75,7 +76,8 @@ export default function ModalBottomWindow({
   if (!isOpen) return null;
 
   // 드래그 거리에 따른 배경 투명도 계산 (0px일 때 0.5, 많이 내릴수록 0에 가깝게)
-  const backdropOpacity = Math.max(0, 0.5 - (dragY / window.innerHeight));
+  const winHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+  const backdropOpacity = Math.max(0, 0.5 - (dragY / winHeight));
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center overflow-hidden">
