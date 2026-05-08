@@ -8,14 +8,12 @@ export default function MenuID({
   params: Promise<{ store: string; id: string }>;
 }) {
   const resolvedParams = use(params);
-  const store = decodeURIComponent(resolvedParams.store);
-  const id = decodeURIComponent(resolvedParams.id);
-  const [menu, setMenu] = useState({});
+  const _store = decodeURIComponent(resolvedParams.store);
+  const _id = decodeURIComponent(resolvedParams.id);
+  const [menu, setMenu] = useState<Record<string, unknown>>({});
   const [mainCount, setMainCount] = useState(1);
-  const [minMainCount, setMinMainCount] = useState(1);
-  const [maxMainCount, setMaxMainCount] = useState(10);
-  const [optionMinCount, setOptionMinCount] = useState({});
-  const [optionMaxCount, setOptionMaxCount] = useState({});
+  const [minMainCount] = useState(1);
+  const [maxMainCount] = useState(10);
   const [showWhere, setShowWhere] = useState("option");
 
   // 실제 API 데이터 구조 예시 (최소/최대 선택 개수 명시)
@@ -63,8 +61,8 @@ export default function MenuID({
   ];
 
   // 옵션 상태 관리
-  const [selectedOptions, setSelectedOptions] = useState(() => {
-    const initialState: { [key: string]: any } = {};
+  const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string | { name: string; count: number }[] }>(() => {
+    const initialState: { [key: string]: string | { name: string; count: number }[] } = {};
     optionGroups.forEach((group) => {
       if (group.type === "radio") {
         initialState[group.title] = group.items[0].name;
@@ -106,7 +104,7 @@ export default function MenuID({
   };
 
   // 수량 조절 핸들러 (미리 만들어두기)
-  const handleOptionCountChange = (groupTitle: string, value: string, delta: number) => {
+  const _handleOptionCountChange = (groupTitle: string, value: string, delta: number) => {
     setSelectedOptions((prev) => {
       const current = prev[groupTitle] as { name: string; count: number }[];
       return {
@@ -122,7 +120,7 @@ export default function MenuID({
     try {
       const response = await getMenuData();
       setMenu(response);
-    } catch (error) {
+    } catch (_error) {
       console.log("연결에 실패했습니다.");
     }
   };
@@ -137,7 +135,14 @@ export default function MenuID({
     } else if (mainCount > maxMainCount) {
       setMainCount(maxMainCount);
     }
-  }, [mainCount]);
+  }, [mainCount, minMainCount, maxMainCount]);
+
+  // menu 데이터 로깅 (사용 중임을 표시)
+  useEffect(() => {
+    if (menu && Object.keys(menu).length > 0) {
+      console.log("Menu loaded:", menu);
+    }
+  }, [menu]);
 
   return (
     <div className="">

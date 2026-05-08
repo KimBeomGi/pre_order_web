@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { IoChevronBack } from "react-icons/io5";
 
-export default function storeHeaderLayout({
+export default function StoreHeaderLayout({
   children,
 }: {
   children: React.ReactNode;
