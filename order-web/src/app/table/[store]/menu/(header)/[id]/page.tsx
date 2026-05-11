@@ -1,6 +1,8 @@
 "use client";
 import { getMenuData } from "@/app/api/store";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useMemo } from "react";
+import CustomCarousel from "@/components/CustomCarousel";
+import ModalFullScreen from "@/components/ModalFullScreen";
 
 export default function MenuID({
   params,
@@ -15,7 +17,18 @@ export default function MenuID({
   const [minMainCount] = useState(1);
   const [maxMainCount] = useState(10);
   const [showWhere, setShowWhere] = useState("option");
+  const [imageFullIndex, setImageFullIndex] = useState(0)
 
+  // 모달 상태
+  const [isFullCarouselOpen, setIsFullCarouselOpen] = useState(false);
+  const [initialCarouselIndex, setInitialCarouselIndex] = useState(0);
+
+  const exImages = [
+    "/img/menu-detail/ricotta_lemon_pasta_example.png",
+    "/img/menu-detail/gimbap_example.png",
+    "/img/menu-detail/woodong_example.png",
+    "/img/menu-detail/napjakmandu_example.png",
+  ];
   // 실제 API 데이터 구조 예시 (최소/최대 선택 개수 명시)
   const optionGroups = [
     {
@@ -34,7 +47,7 @@ export default function MenuID({
       title: "기본 토핑 (필수)",
       type: "checkbox",
       required: true,
-      minSelection: 1,
+      minSelection: 2,
       maxSelection: 4,
       items: [
         { name: "숙주나물", price: 0 },
@@ -46,23 +59,65 @@ export default function MenuID({
       ],
     },
     {
+      title: "누구의 손길?",
+      type: "radio",
+      required: true,
+      minSelection: 1,
+      maxSelection: 1,
+      items: [
+        { name: "신입 최씨", price: 0 },
+        { name: "양식 경력 2년의 홍씨", price: 0 },
+        { name: "일단 다 만들줄 아는 사장님", price: 0 },
+        { name: "요리만 20년 오씨", price: 2000 },
+      ],
+    },
+    {
+      title: "가게번창을 위한 후원을 해주세요. 1,000원으로 더 맛있는 재료를 준비할 수 있습니다.🐳",
+      type: "radio",
+      required: true,
+      minSelection: 1,
+      maxSelection: 1,
+      items: [
+        { name: "무슨소리 알아서 해!", price: 0 },
+        { name: "천원쯤이야", price: 1000 },
+        { name: "싫은데 난 1만원 할건데?", price: 10000 },
+        { name: "난 부자니까 5만원", price: 50000 },
+      ],
+    },
+    {
       title: "추가 선택",
+      type: "checkbox",
+      required: false,
+      minSelection: 0,
+      maxSelection: 3,
+      items: [
+        { name: "치즈 추가", price: 1000 },
+        { name: "베이컨 추가", price: 1500 },
+        { name: "면 추가", price: 2000 },
+      ],
+    },
+    {
+      title: "사이드",
       type: "checkbox",
       required: false,
       minSelection: 0,
       maxSelection: 4,
       items: [
-        { name: "치즈 추가", price: 1000 },
-        { name: "베이컨 추가", price: 1500 },
-        { name: "면 추가", price: 2000 },
+        { name: "물만두", price: 6000 },
+        { name: "감자튀김", price: 3000 },
+        { name: "사이다", price: 2000 },
         { name: "공기밥", price: 1000 },
       ],
     },
   ];
 
   // 옵션 상태 관리
-  const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string | { name: string; count: number }[] }>(() => {
-    const initialState: { [key: string]: string | { name: string; count: number }[] } = {};
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [key: string]: string | { name: string; count: number }[];
+  }>(() => {
+    const initialState: {
+      [key: string]: string | { name: string; count: number }[];
+    } = {};
     optionGroups.forEach((group) => {
       if (group.type === "radio") {
         initialState[group.title] = group.items[0].name;
@@ -73,44 +128,110 @@ export default function MenuID({
     return initialState;
   });
 
+  // 총 합계 계산 (useMemo 활용)
+  const totalPrice = useMemo(() => {
+    let basePrice = 12000; // 기본 메뉴 가격
+    let optionsPrice = 0;
+
+    optionGroups.forEach((group) => {
+      const selected = selectedOptions[group.title];
+      if (group.type === "radio") {
+        // 라디오 버튼일 경우
+        const item = group.items.find((i) => i.name === selected);
+        if (item) optionsPrice += item.price;
+      } else {
+        // 체크박스일 경우 (배열)
+        (selected as { name: string; count: number }[]).forEach((selItem) => {
+          const item = group.items.find((i) => i.name === selItem.name);
+          if (item) optionsPrice += item.price * selItem.count;
+        });
+      }
+    });
+
+    return (basePrice + optionsPrice) * mainCount;
+  }, [selectedOptions, mainCount]);
+
+  // 필수 옵션 선택 여부 확인 (useMemo 활용)
+  const isReadyToOrder = useMemo(() => {
+    return optionGroups.every((group) => {
+      if (!group.required) return true; // 필수 아니면 패스
+
+      const selected = selectedOptions[group.title];
+      if (group.type === "radio") {
+        // 라디오는 값이 있으면 통과
+        return !!selected;
+      } else {
+        // 체크박스는 최소 선택 개수 확인
+        const selectedList = selected as { name: string; count: number }[];
+        return selectedList.length >= (group.minSelection || 1);
+      }
+    });
+  }, [selectedOptions]);
+
   // 라디오 변경 핸들러
   const handleRadioChange = (groupTitle: string, value: string) => {
     setSelectedOptions((prev) => ({ ...prev, [groupTitle]: value }));
   };
 
   // 체크박스 변경 핸들러 (객체 구조로 변경)
-  const handleCheckboxChange = (groupTitle: string, value: string, maxSelection?: number) => {
-    const currentSelections = (selectedOptions[groupTitle] || []) as { name: string; count: number }[];
+  const handleCheckboxChange = (
+    groupTitle: string,
+    value: string,
+    maxSelection?: number,
+  ) => {
+    const currentSelections = (selectedOptions[groupTitle] || []) as {
+      name: string;
+      count: number;
+    }[];
     const isExisting = currentSelections.some((item) => item.name === value);
 
     // 새로 추가하려는 경우에만 최대 개수 체크
-    if (!isExisting && maxSelection && currentSelections.length >= maxSelection) {
+    if (
+      !isExisting &&
+      maxSelection &&
+      currentSelections.length >= maxSelection
+    ) {
       alert(`최대 ${maxSelection}개까지 선택 가능합니다.`);
       return;
     }
 
     setSelectedOptions((prev) => {
-      const current = (prev[groupTitle] || []) as { name: string; count: number }[];
+      const current = (prev[groupTitle] || []) as {
+        name: string;
+        count: number;
+      }[];
       const existingIdx = current.findIndex((item) => item.name === value);
 
       if (existingIdx > -1) {
         // 이미 있으면 제거
-        return { ...prev, [groupTitle]: current.filter((item) => item.name !== value) };
+        return {
+          ...prev,
+          [groupTitle]: current.filter((item) => item.name !== value),
+        };
       } else {
         // 새로 추가
-        return { ...prev, [groupTitle]: [...current, { name: value, count: 1 }] };
+        return {
+          ...prev,
+          [groupTitle]: [...current, { name: value, count: 1 }],
+        };
       }
     });
   };
 
   // 수량 조절 핸들러 (미리 만들어두기)
-  const _handleOptionCountChange = (groupTitle: string, value: string, delta: number) => {
+  const _handleOptionCountChange = (
+    groupTitle: string,
+    value: string,
+    delta: number,
+  ) => {
     setSelectedOptions((prev) => {
       const current = prev[groupTitle] as { name: string; count: number }[];
       return {
         ...prev,
         [groupTitle]: current.map((item) =>
-          item.name === value ? { ...item, count: Math.max(1, item.count + delta) } : item
+          item.name === value
+            ? { ...item, count: Math.max(1, item.count + delta) }
+            : item,
         ),
       };
     });
@@ -149,48 +270,76 @@ export default function MenuID({
       {/* 상단 */}
       <div>
         {/* 캐러셀 되어야함. 또 이미지를 클릭하면 제대로 보이게 */}
-        <div className="mb-[2.5em]">
-          <div>
-            <img
-              className="w-full h-[25vh] object-cover"
-              src="/img/menu-detail/ricotta_lemon_pasta_example.png"
-              alt=""
-              onClick={() => {
-                // 이제 전체화면으로 해당 이미지 object-contain으로 해서 바탕은 검은색에 얘만 똑 보여주는 모달 그리고 당연히 그 안에서도 캐러셀 되어야함.
-                // 캐러셀은 좌우로. 근데 따로 컴포넌트로 만들어서 사용하는게 더 좋겠다.
-              }}
+        <div className="mb-[2em]">
+          <CustomCarousel
+            content={exImages}
+            onClickItem={(index) => {
+              setInitialCarouselIndex(index);
+              setIsFullCarouselOpen(true);
+            }}
+          />
+        </div>
+
+        {/* 전체화면 모달 캐러셀 */}
+        <ModalFullScreen
+          isOpen={isFullCarouselOpen}
+          onClose={() => setIsFullCarouselOpen(false)}
+        >
+          <div className="w-full max-w-4xl max-h-screen flex items-center justify-center">
+            <CustomCarousel
+              showIndex={false}
+              content={exImages}
+              initialIndex={initialCarouselIndex}
+              aspectRatio="aspect-square"
+              imageFit="contain"
+              onIndexChange={(index) => setImageFullIndex(index)}
             />
           </div>
-        </div>
+          <div className="absolute bottom-[2em] left-1/2 -translate-x-1/2 text-[#FFFFFF] z-[210] font-medium text-[1.125em] bg-black/30 px-[1em] py-[0.2em] rounded-full backdrop-blur-sm">
+            {imageFullIndex + 1} / {exImages.length}
+          </div>
+        </ModalFullScreen>
         <div className="px-[1.25em]">
           <div className="mb-[1.25em]">
-            <h1 className="text-[1.625em] font-semibold mb-[0.625em]">리코타레몬파스타</h1>
+            <div
+              className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
+              // style={{ backgroundColor: product.badge_color }}
+              style={{ backgroundColor: "#DA4352" }}
+            >
+              {/* {product.badge_content} */}
+              인기
+            </div>
+            <h1 className="text-[1.625em] font-semibold mb-[0.625em]">
+              리코타레몬파스타
+            </h1>
             <p className="text-[1.25em] font-medium text-[#6C7A88]">
               상큼한 레몬과 부드러운 리코타 치즈가 어우러진 산뜻한 파스타
             </p>
           </div>
-          <div className="flex justify-between items-center">
-            <h2 className="text-[1.875em] font-semibold">12,000원</h2>
+          <div className="flex justify-between items-center mb-[1em]">
+            <h2 className="text-[1.5em] font-semibold">12,000원</h2>
             <div className="flex items-center bg-[#F2F3F6] rounded-[0.75em] py-[0.3125em]">
               {/* min 값 되면 작동안하게 */}
               <button
-                className="w-[2.5em] h-[2.5em] flex items-center justify-center text-[1.25em] text-[#6C7A88]"
+                className={`w-[2em] h-[2em] flex items-center justify-center text-[1.25em] ${minMainCount === mainCount ? "opacity-0" : ""}`}
+                disabled={minMainCount >= mainCount}
                 onClick={() =>
                   setMainCount(Math.max(minMainCount, mainCount - 1))
                 }
               >
-                <span className="mb-1">−</span>
+                <span className={`mb-1 `}>−</span>
               </button>
 
-              <div className="bg-[#FFFFFF] h-[3.75em] w-[3.75em] rounded-[0.5em] shadow-sm shadow-[0_0.125em_0.25em_rgba(0,0,0,0.25)] min-w-[2.5em] flex items-center justify-center">
-                <span className="text-[1.375em] font-semibold text-[#2D3436]">
+              <div className="bg-[#FFFFFF] h-[3em] w-[3em] rounded-[0.5em] shadow-sm shadow-[0_0.125em_0.25em_rgba(0,0,0,0.25)] min-w-[2.5em] flex items-center justify-center">
+                <span className="text-[1.25em] font-semibold text-[#2D3436]">
                   {mainCount}
                 </span>
               </div>
 
               {/* max 값 되면 작동안하게 */}
               <button
-                className="w-[2.5em] h-[2.5em] flex items-center justify-center text-[1.25em] text-[#6C7A88]"
+                className={`w-[2em] h-[2em] flex items-center justify-center text-[1.25em] ${maxMainCount === mainCount ? "opacity-0" : ""}`}
+                disabled={maxMainCount <= mainCount}
                 onClick={() =>
                   setMainCount(Math.min(maxMainCount, mainCount + 1))
                 }
@@ -229,23 +378,23 @@ export default function MenuID({
         </div>
       </div>
       {/* 옵션 및 자세히보기 box */}
-      <div>
+      <div className="mb-[6em]">
         {showWhere === "option" ? (
           // 옵션
-          <div className="px-[1.875em] mb-[10em] space-y-[2em]">
+          <div className="px-[1.875em] space-y-[2em]">
             {optionGroups.map((group, groupIdx) => (
               <div key={groupIdx}>
                 <div className="mb-[0.75em]">
-                  <div className="flex items-center mb-[0.25em]">
-                    <h3 className="text-[1.125em] font-semibold inline-block mr-[0.88888889em]">
+                  <div className="flex items-center mb-[0.25em] gap-x-[0.88888889em]">
+                    <h3 className="text-[1.125em] font-semibold inline-block">
                       {group.title}
                     </h3>
                     {group.required ? (
-                      <span className="bg-[#FEF2F2] text-[#EF4444] font-semibold py-[0.25em] px-[0.625em] rounded-[0.625em]">
+                      <span className="shrink-0 text-[0.875em] bg-[#FEF2F2] text-[#EF4444] font-semibold py-[0.25em] px-[0.625em] rounded-[0.625em]">
                         필수
                       </span>
                     ) : (
-                      <span className="bg-[#F2F3F6] text-[#6C7A88] font-semibold py-[0.25em] px-[0.625em] rounded-[0.625em]">
+                      <span className="shrink-0 text-[0.875em] bg-[#F2F3F6] text-[#6C7A88] font-semibold py-[0.25em] px-[0.625em] rounded-[0.625em]">
                         선택
                       </span>
                     )}
@@ -264,9 +413,12 @@ export default function MenuID({
                     const isSelected =
                       group.type === "radio"
                         ? selectedOptions[group.title] === item.name
-                        : (selectedOptions[group.title] as { name: string; count: number }[]).some(
-                            (selected) => selected.name === item.name
-                          );
+                        : (
+                            selectedOptions[group.title] as {
+                              name: string;
+                              count: number;
+                            }[]
+                          ).some((selected) => selected.name === item.name);
 
                     return (
                       <li key={optionId} className="w-full">
@@ -288,7 +440,7 @@ export default function MenuID({
                                   : handleCheckboxChange(
                                       group.title,
                                       item.name,
-                                      group.maxSelection
+                                      group.maxSelection,
                                     )
                               }
                             />
@@ -326,9 +478,26 @@ export default function MenuID({
           </div>
         ) : null}
       </div>
-      <button className="fixed text-[1.25em] py-[0.8em] rounded-[0.5em] bg-[#222F4A] bottom-[1em] left-1/2 -translate-x-1/2 w-[380px] cursor-pointer">
-        <span className="bg-[#FFFFFF] mr-[1.2em]">1</span>
-        <span className="text-[#FFFFFF]">15,900원 담기</span>
+
+      {/* 해당 페이지에서 필수 + 선택한 것의 총 합 가격이 누른 가격이 반영 되어야함 */}
+      <button
+        disabled={!isReadyToOrder}
+        className={`text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[0.9375em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] flex justify-center items-center gap-x-[0.9375em] transition-colors ${
+          isReadyToOrder ? "bg-[#222F4A]" : "bg-[#B4B4B4]"
+        }`}
+        onClick={() => {
+          // 이버튼을 누르면 담기를 하면서 해당 메인 페이지인 목록으로 돌아가야하는군.
+        }}
+      >
+        {/* 이 표시 갯수는 메인 수량 */}
+        <span className="text-[1.25em] bg-[#FFFFFF] font-semibold w-[1.5em] h-[1.5em] flex justify-center items-center rounded-[0.3em]">
+          {mainCount}
+        </span>
+
+        {/* 이 가격은 해당 페이지내 선택한 메뉴-옵션 + 메뉴-옵션 ... 의 가격 */}
+        <span className="font-semibold text-[1.25em] text-[#FFFFFF]">
+          {totalPrice.toLocaleString()}원 담기
+        </span>
       </button>
     </div>
   );

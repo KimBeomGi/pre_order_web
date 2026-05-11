@@ -302,7 +302,15 @@ export default function Menupage({
                 <div className="overflow-hidden w-full">
                   <div className="flex flex-row gap-x-[0.3333em]">
                     {storeData["recommend"].map((value, key) => (
-                      <div key={key} className="w-1/3">
+                      <div
+                        key={key}
+                        className="w-1/3"
+                        onClick={() => {
+                          router.push(
+                            `/table/${resolvedParams.store}/menu/${value.id}`,
+                          );
+                        }}
+                      >
                         <img
                           className="w-full h-[94px] object-cover"
                           src={value.img_src}
@@ -461,7 +469,7 @@ export default function Menupage({
         {/* 가게정보 원산지 */}
         {/* 장바구니에 물건이 담기면 mb-[6em]이 추가 되어야함. */}
         <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em] mb-[6em]">
-        {/* <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em]"> */}
+          {/* <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em]"> */}
           <h2 className="text-[1.2em] font-semibold text-[#4C5868]">
             가게 정보 · 원산지
           </h2>
@@ -533,17 +541,21 @@ export default function Menupage({
       )}
 
       {/* 장바구니 보기 버튼 */}
-      <div
-        className="fixed left-1/2 -translate-x-1/2 py-[0.5em] bottom-[1em] rounded-[0.5em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[1em]"
-        onClick={() => {}}
+      {/* 해당 페이지에서 필수 + 선택한 것의 총 합 가격이 누른 가격이 반영 되어야함 */}
+      <button
+        className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[0.9375em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
+        onClick={() => {
+          // 이버튼을 누르면 담기를 하면서 해당 메인 페이지인 목록으로 돌아가야하는군.
+        }}
       >
-        <div className="bg-[#FFFFFF] w-[2em] h-[2em] flex justify-center items-center rounded-[0.4em]">
-          <p className="font-semibold text-[1.333333em]">3</p>
-        </div>
-        <p className="font-semibold text-[1.33333em] text-[#FFFFFF]">
+        {/* 이 표시 갯수는 총 담은 메인의 수량 */}
+        <span className="text-[1.25em] bg-[#FFFFFF] font-semibold w-[1.5em] h-[1.5em] flex justify-center items-center rounded-[0.3em]">
+          1
+        </span>
+        <span className="font-semibold text-[1.25em] text-[#FFFFFF]">
           65,000원 장바구니 보기
-        </p>
-      </div>
+        </span>
+      </button>
     </div>
   );
 }
