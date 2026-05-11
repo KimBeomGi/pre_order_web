@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
+
 
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.woff2",
@@ -23,6 +25,12 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${pretendard.variable} antialiased`}>
         {children}
+        <Toaster
+          position="bottom-center"
+          toastOptions={{
+            duration: 1500,
+          }}
+        />
       </body>
     </html>
   );

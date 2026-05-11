@@ -1,4 +1,6 @@
 "use client";
+
+import toast from "react-hot-toast";
 import { getMenuData } from "@/app/api/store";
 import { use, useEffect, useState, useMemo } from "react";
 import CustomCarousel from "@/components/CustomCarousel";
@@ -19,100 +21,107 @@ export default function MenuID({
   const [minMainCount] = useState(1);
   const [maxMainCount] = useState(10);
   const [showWhere, setShowWhere] = useState("option");
-  const [imageFullIndex, setImageFullIndex] = useState(0)
+  const [imageFullIndex, setImageFullIndex] = useState(0);
 
   // 모달 상태
   const [isFullCarouselOpen, setIsFullCarouselOpen] = useState(false);
   const [initialCarouselIndex, setInitialCarouselIndex] = useState(0);
 
-  const exImages = useMemo(() => [
-    "/img/menu-detail/ricotta_lemon_pasta_example.png",
-    "/img/menu-detail/gimbap_example.png",
-    "/img/menu-detail/woodong_example.png",
-    "/img/menu-detail/napjakmandu_example.png",
-  ], []);
+  const exImages = useMemo(
+    () => [
+      "/img/menu-detail/ricotta_lemon_pasta_example.png",
+      "/img/menu-detail/gimbap_example.png",
+      "/img/menu-detail/woodong_example.png",
+      "/img/menu-detail/napjakmandu_example.png",
+    ],
+    [],
+  );
 
   // 실제 API 데이터 구조 예시 (최소/최대 선택 개수 명시)
-  const optionGroups = useMemo(() => [
-    {
-      title: "맵기 선택",
-      type: "radio",
-      required: true,
-      minSelection: 1,
-      maxSelection: 1,
-      items: [
-        { name: "기본 레벨", price: 0 },
-        { name: "1레벨 (신라면정도)", price: 0 },
-        { name: "2레벨 (불닭볶음면 정도)", price: 500 },
-      ],
-    },
-    {
-      title: "기본 토핑 (필수)",
-      type: "checkbox",
-      required: true,
-      minSelection: 2,
-      maxSelection: 4,
-      items: [
-        { name: "숙주나물", price: 0 },
-        { name: "청경채", price: 0 },
-        { name: "알배기배추", price: 0 },
-        { name: "양배추", price: 0 },
-        { name: "버섯", price: 0 },
-        { name: "건두부", price: 0 },
-      ],
-    },
-    {
-      title: "누구의 손길?",
-      type: "radio",
-      required: true,
-      minSelection: 1,
-      maxSelection: 1,
-      items: [
-        { name: "신입 최씨", price: 0 },
-        { name: "양식 경력 2년의 홍씨", price: 0 },
-        { name: "일단 다 만들줄 아는 사장님", price: 0 },
-        { name: "요리만 20년 오씨", price: 2000 },
-      ],
-    },
-    {
-      title: "가게번창을 위한 후원을 해주세요. 1,000원으로 더 맛있는 재료를 준비할 수 있습니다.🐳",
-      type: "radio",
-      required: true,
-      minSelection: 1,
-      maxSelection: 1,
-      items: [
-        { name: "무슨소리 알아서 해!", price: 0 },
-        { name: "천원쯤이야", price: 1000 },
-        { name: "싫은데 난 1만원 할건데?", price: 10000 },
-        { name: "난 부자니까 5만원", price: 50000 },
-      ],
-    },
-    {
-      title: "추가 선택",
-      type: "checkbox",
-      required: false,
-      minSelection: 0,
-      maxSelection: 3,
-      items: [
-        { name: "치즈 추가", price: 1000 },
-        { name: "베이컨 추가", price: 1500 },
-        { name: "면 추가", price: 2000 },
-      ],
-    },
-    {
-      title: "사이드",
-      type: "checkbox",
-      required: false,
-      minSelection: 0,
-      maxSelection: 4,
-      items: [
-        { name: "물만두", price: 6000 },
-        { name: "감자튀김", price: 3000 },
-        { name: "사이다", price: 2000 },
-        { name: "공기밥", price: 1000 },
-      ],
-    },
-  ], []);
+  const optionGroups = useMemo(
+    () => [
+      {
+        title: "맵기 선택",
+        type: "radio",
+        required: true,
+        minSelection: 1,
+        maxSelection: 1,
+        items: [
+          { name: "기본 레벨", price: 0 },
+          { name: "1레벨 (신라면정도)", price: 0 },
+          { name: "2레벨 (불닭볶음면 정도)", price: 500 },
+        ],
+      },
+      {
+        title: "기본 토핑 (필수)",
+        type: "checkbox",
+        required: true,
+        minSelection: 2,
+        maxSelection: 4,
+        items: [
+          { name: "숙주나물", price: 0 },
+          { name: "청경채", price: 0 },
+          { name: "알배기배추", price: 0 },
+          { name: "양배추", price: 0 },
+          { name: "버섯", price: 0 },
+          { name: "건두부", price: 0 },
+        ],
+      },
+      {
+        title: "누구의 손길?",
+        type: "radio",
+        required: true,
+        minSelection: 1,
+        maxSelection: 1,
+        items: [
+          { name: "신입 최씨", price: 0 },
+          { name: "양식 경력 2년의 홍씨", price: 0 },
+          { name: "일단 다 만들줄 아는 사장님", price: 0 },
+          { name: "요리만 20년 오씨", price: 2000 },
+        ],
+      },
+      {
+        title:
+          "가게번창을 위한 후원을 해주세요. 1,000원으로 더 맛있는 재료를 준비할 수 있습니다.🐳",
+        type: "radio",
+        required: true,
+        minSelection: 1,
+        maxSelection: 1,
+        items: [
+          { name: "무슨소리 알아서 해!", price: 0 },
+          { name: "천원쯤이야", price: 1000 },
+          { name: "싫은데 난 1만원 할건데?", price: 10000 },
+          { name: "난 부자니까 5만원", price: 50000 },
+        ],
+      },
+      {
+        title: "추가 선택",
+        type: "checkbox",
+        required: false,
+        minSelection: 0,
+        maxSelection: 3,
+        items: [
+          { name: "치즈 추가", price: 1000 },
+          { name: "베이컨 추가", price: 1500 },
+          { name: "면 추가", price: 2000 },
+        ],
+      },
+      {
+        title: "사이드",
+        type: "checkbox",
+        required: false,
+        minSelection: 0,
+        maxSelection: 4,
+        items: [
+          { name: "물만두", price: 6000 },
+          { name: "감자튀김", price: 3000 },
+          { name: "사이다", price: 2000 },
+          { name: "공기밥", price: 1000 },
+        ],
+      },
+    ],
+    [],
+  );
 
   // 옵션 상태 관리
   const [selectedOptions, setSelectedOptions] = useState<{
@@ -194,7 +203,18 @@ export default function MenuID({
       maxSelection &&
       currentSelections.length >= maxSelection
     ) {
-      alert(`최대 ${maxSelection}개까지 선택 가능합니다.`);
+      // toast.success(`최대 ${maxSelection}개까지 선택 가능합니다.`);
+      toast(`최대 ${maxSelection}개까지 선택 가능합니다.`, {
+        style: {
+          border: "1px solid #713200",
+          color: "#713200",
+          opacity: 0.87
+        },
+        iconTheme: {
+          primary: "#713200",
+          secondary: "#FFFAEE",
+        },
+      });
       return;
     }
 
