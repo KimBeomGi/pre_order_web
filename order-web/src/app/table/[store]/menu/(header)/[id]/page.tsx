@@ -10,7 +10,9 @@ export default function MenuID({
   params: Promise<{ store: string; id: string }>;
 }) {
   const resolvedParams = use(params);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _store = decodeURIComponent(resolvedParams.store);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _id = decodeURIComponent(resolvedParams.id);
   const [menu, setMenu] = useState<Record<string, unknown>>({});
   const [mainCount, setMainCount] = useState(1);
@@ -23,14 +25,15 @@ export default function MenuID({
   const [isFullCarouselOpen, setIsFullCarouselOpen] = useState(false);
   const [initialCarouselIndex, setInitialCarouselIndex] = useState(0);
 
-  const exImages = [
+  const exImages = useMemo(() => [
     "/img/menu-detail/ricotta_lemon_pasta_example.png",
     "/img/menu-detail/gimbap_example.png",
     "/img/menu-detail/woodong_example.png",
     "/img/menu-detail/napjakmandu_example.png",
-  ];
+  ], []);
+
   // 실제 API 데이터 구조 예시 (최소/최대 선택 개수 명시)
-  const optionGroups = [
+  const optionGroups = useMemo(() => [
     {
       title: "맵기 선택",
       type: "radio",
@@ -109,7 +112,7 @@ export default function MenuID({
         { name: "공기밥", price: 1000 },
       ],
     },
-  ];
+  ], []);
 
   // 옵션 상태 관리
   const [selectedOptions, setSelectedOptions] = useState<{
@@ -130,7 +133,7 @@ export default function MenuID({
 
   // 총 합계 계산 (useMemo 활용)
   const totalPrice = useMemo(() => {
-    let basePrice = 12000; // 기본 메뉴 가격
+    const basePrice = 12000; // 기본 메뉴 가격
     let optionsPrice = 0;
 
     optionGroups.forEach((group) => {
@@ -149,7 +152,7 @@ export default function MenuID({
     });
 
     return (basePrice + optionsPrice) * mainCount;
-  }, [selectedOptions, mainCount]);
+  }, [selectedOptions, mainCount, optionGroups]);
 
   // 필수 옵션 선택 여부 확인 (useMemo 활용)
   const isReadyToOrder = useMemo(() => {
@@ -166,7 +169,7 @@ export default function MenuID({
         return selectedList.length >= (group.minSelection || 1);
       }
     });
-  }, [selectedOptions]);
+  }, [selectedOptions, optionGroups]);
 
   // 라디오 변경 핸들러
   const handleRadioChange = (groupTitle: string, value: string) => {
