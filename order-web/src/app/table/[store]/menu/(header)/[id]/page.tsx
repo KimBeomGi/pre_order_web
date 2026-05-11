@@ -1,10 +1,10 @@
 "use client";
 
-import toast from "react-hot-toast";
 import { getMenuData } from "@/app/api/store";
 import { use, useEffect, useState, useMemo } from "react";
 import CustomCarousel from "@/components/CustomCarousel";
 import ModalFullScreen from "@/components/ModalFullScreen";
+import { toast } from "react-hot-toast";
 
 export default function MenuID({
   params,
@@ -206,9 +206,8 @@ export default function MenuID({
       // toast.success(`최대 ${maxSelection}개까지 선택 가능합니다.`);
       toast(`최대 ${maxSelection}개까지 선택 가능합니다.`, {
         style: {
-          border: "1px solid #713200",
-          color: "#713200",
-          opacity: 0.87
+          color: "#222F4A",
+          background: "rgba(255, 255, 255, 0.9)",
         },
         iconTheme: {
           primary: "#713200",

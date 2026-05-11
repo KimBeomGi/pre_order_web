@@ -398,62 +398,66 @@ export default function Menupage({
                     <Fragment key={menu_key}>
                       {product.category === value ? (
                         <li
-                          className="flex flex-row items-center justify-between py-[1em] border-b border-b-[#ECEDEF] last:border-b-0"
+                          className="py-[1em] border-b border-b-[#ECEDEF] last:border-b-0"
                           onClick={() => {
                             router.push(
                               `/table/${resolvedParams.store}/menu/${product.id}`,
                             );
                           }}
                         >
-                          <div className="w-[60%]">
-                            {product.is_soldout ? (
-                              <div
-                                className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
-                                style={{ backgroundColor: "#525A67" }}
-                              >
-                                품절
-                              </div>
-                            ) : product.badge ? (
-                              <div
-                                className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
-                                style={{ backgroundColor: product.badge_color }}
-                              >
-                                {product.badge_content}
-                              </div>
-                            ) : (
-                              ""
-                            )}
+                          <div className="flex flex-row items-center justify-between active:scale-95 transition-all duration-50">
+                            <div className="w-[60%]">
+                              {product.is_soldout ? (
+                                <div
+                                  className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
+                                  style={{ backgroundColor: "#525A67" }}
+                                >
+                                  품절
+                                </div>
+                              ) : product.badge ? (
+                                <div
+                                  className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
+                                  style={{
+                                    backgroundColor: product.badge_color,
+                                  }}
+                                >
+                                  {product.badge_content}
+                                </div>
+                              ) : (
+                                ""
+                              )}
 
-                            <h5
-                              className={`text-[1.2em] ${product.is_soldout ? "opacity-50" : ""} text-[#293448] font-semibold`}
-                            >
-                              {product.product_name}
-                              <br />
-                              {product.price.toLocaleString()}원
-                            </h5>
-                            <p className="text-[0.86666em] text-[#6C7A88]">
-                              {product.description}
-                            </p>
-                          </div>
-                          <div
-                            className={`w-[6.66667em] h-[6.66667em] rounded-[0.5em] flex justify-center items-center relative overflow-hidden shrink-0`}
-                          >
-                            {product.img_src ? (
-                              <img
-                                className="w-full h-full object-cover"
-                                src={product.img_src}
-                                alt=""
-                              />
-                            ) : (
-                              <p className="text-[1.6em]">
-                                이미지<br></br>준비중
+                              <h5
+                                className={`text-[1.2em] ${product.is_soldout ? "opacity-50" : ""} text-[#293448] font-semibold`}
+                              >
+                                {product.product_name}
+                                <br />
+                                {product.price.toLocaleString()}원
+                              </h5>
+                              <p className="text-[0.86666em] text-[#6C7A88]">
+                                {product.description}
                               </p>
-                            )}
-                            {product.is_soldout ? (
-                              <div className="absolute w-full h-full bg-[#D2D2D2B2] left-0 top-0"></div>
-                            ) : (
-                              ""
-                            )}
+                            </div>
+                            <div
+                              className={`w-[6.66667em] h-[6.66667em] rounded-[0.5em] flex justify-center items-center relative overflow-hidden shrink-0`}
+                            >
+                              {product.img_src ? (
+                                <img
+                                  className="w-full h-full object-cover"
+                                  src={product.img_src}
+                                  alt=""
+                                />
+                              ) : (
+                                <p className="text-[1.6em]">
+                                  이미지<br></br>준비중
+                                </p>
+                              )}
+                              {product.is_soldout ? (
+                                <div className="absolute w-full h-full bg-[#D2D2D2B2] left-0 top-0"></div>
+                              ) : (
+                                ""
+                              )}
+                            </div>
                           </div>
                         </li>
                       ) : (
