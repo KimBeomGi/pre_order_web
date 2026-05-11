@@ -398,15 +398,35 @@ export default function Menupage({
                     <Fragment key={menu_key}>
                       {product.category === value ? (
                         <li
-                          className="py-[1em] border-b border-b-[#ECEDEF] last:border-b-0"
+                          className={`py-[1em] border-b border-b-[#ECEDEF] last:border-b-0`}
                           onClick={() => {
                             router.push(
                               `/table/${resolvedParams.store}/menu/${product.id}`,
                             );
                           }}
                         >
-                          <div className="flex flex-row items-center justify-between active:scale-95 transition-all duration-50">
-                            <div className="w-[60%]">
+                          <div className="flex flex-row items-center justify-between">
+                            <div
+                              className={`w-[6.66667em] h-[6.66667em] rounded-[0.5em] flex justify-center items-center relative overflow-hidden shrink-0`}
+                            >
+                              {product.img_src ? (
+                                <img
+                                  className="w-full h-full object-cover"
+                                  src={product.img_src}
+                                  alt=""
+                                />
+                              ) : (
+                                <p className="text-[1.6em]">
+                                  이미지<br></br>준비중
+                                </p>
+                              )}
+                              {product.is_soldout ? (
+                                <div className="absolute w-full h-full bg-[#D2D2D2B2] left-0 top-0"></div>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                            <div className="w-[65%]">
                               {product.is_soldout ? (
                                 <div
                                   className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
@@ -437,26 +457,6 @@ export default function Menupage({
                               <p className="text-[0.86666em] text-[#6C7A88]">
                                 {product.description}
                               </p>
-                            </div>
-                            <div
-                              className={`w-[6.66667em] h-[6.66667em] rounded-[0.5em] flex justify-center items-center relative overflow-hidden shrink-0`}
-                            >
-                              {product.img_src ? (
-                                <img
-                                  className="w-full h-full object-cover"
-                                  src={product.img_src}
-                                  alt=""
-                                />
-                              ) : (
-                                <p className="text-[1.6em]">
-                                  이미지<br></br>준비중
-                                </p>
-                              )}
-                              {product.is_soldout ? (
-                                <div className="absolute w-full h-full bg-[#D2D2D2B2] left-0 top-0"></div>
-                              ) : (
-                                ""
-                              )}
                             </div>
                           </div>
                         </li>
@@ -550,6 +550,7 @@ export default function Menupage({
         className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[0.9375em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
         onClick={() => {
           // 이버튼을 누르면 담기를 하면서 해당 메인 페이지인 목록으로 돌아가야하는군.
+          router.push(`/table/${resolvedParams.store}/menu/cart`);
         }}
       >
         {/* 이 표시 갯수는 총 담은 메인의 수량 */}
