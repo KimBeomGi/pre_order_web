@@ -119,7 +119,7 @@ export default function Cart({
           </div>
           {/* // 총 가격 및 갯수 */}
           <button
-            className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[0.9375em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
+            className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
             onClick={() => {}}
           >
             <span className="text-[1.25em] bg-[#FFFFFF] font-semibold w-[1.5em] h-[1.5em] flex justify-center items-center rounded-[0.3em]">

@@ -547,10 +547,10 @@ export default function Menupage({
       {/* 장바구니 보기 버튼 */}
       {/* 해당 페이지에서 필수 + 선택한 것의 총 합 가격이 누른 가격이 반영 되어야함 */}
       <button
-        className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[0.9375em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
+        className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
         onClick={() => {
           // 이버튼을 누르면 담기를 하면서 해당 메인 페이지인 목록으로 돌아가야하는군.
-          router.push(`/table/${resolvedParams.store}/menu/cart`);
+          router.push(`/table/${resolvedParams.store}/cart`);
         }}
       >
         {/* 이 표시 갯수는 총 담은 메인의 수량 */}

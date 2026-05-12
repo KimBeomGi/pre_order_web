@@ -5,12 +5,14 @@ import { use, useEffect, useState, useMemo } from "react";
 import CustomCarousel from "@/components/CustomCarousel";
 import ModalFullScreen from "@/components/ModalFullScreen";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function MenuID({
   params,
 }: {
   params: Promise<{ store: string; id: string }>;
 }) {
+  const router = useRouter()
   const resolvedParams = use(params);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _store = decodeURIComponent(resolvedParams.store);
@@ -504,11 +506,22 @@ export default function MenuID({
       {/* 해당 페이지에서 필수 + 선택한 것의 총 합 가격이 누른 가격이 반영 되어야함 */}
       <button
         disabled={!isReadyToOrder}
-        className={`text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[0.9375em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] flex justify-center items-center gap-x-[0.9375em] transition-colors ${
+        className={`text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] flex justify-center items-center gap-x-[0.9375em] transition-colors ${
           isReadyToOrder ? "bg-[#222F4A]" : "bg-[#B4B4B4]"
         }`}
         onClick={() => {
           // 이버튼을 누르면 담기를 하면서 해당 메인 페이지인 목록으로 돌아가야하는군.
+          router.push(`/table/${resolvedParams.store}/menu`);
+          toast(`장바구니에 메뉴를 추가했어요.`, {
+            style: {
+              color: "#222F4A",
+              background: "rgba(255, 255, 255, 0.9)",
+            },
+            iconTheme: {
+              primary: "#713200",
+              secondary: "#FFFAEE",
+            },
+          });
         }}
       >
         {/* 이 표시 갯수는 메인 수량 */}

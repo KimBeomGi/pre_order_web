@@ -27,8 +27,12 @@ export default function RootLayout({
         {children}
         <Toaster
           position="bottom-center"
+          containerStyle={{
+            // 기본 1rem, 명시해주면, 명시해준대로.
+            bottom: "3.8125em",
+          }}
           toastOptions={{
-            duration: 1500,
+            duration: 10000,
           }}
         />
       </body>
