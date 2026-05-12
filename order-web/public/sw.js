@@ -1,3 +1,33 @@
+// 서비스 워커
+const CACHE_NAME = 'genie-order-v1';
+
+// 캐싱할 최소한의 자산
+const PRECACHE_URLS = [
+  '/',
+  '/manifest.json',
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
 self.addEventListener('push', function (event) {
   console.log('[Service Worker] 푸시 알림 수신');
   if (event.data) {
@@ -44,4 +74,37 @@ self.addEventListener('notificationclick', function (event) {
   )
 })
 
-self.addEventListener('fetch', (event) => { })
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // 1. API 요청, POST 요청, 크롬 확장 프로그램 요청은 캐싱 제외
+  if (
+    url.pathname.startsWith('/api/') || 
+    event.request.method !== 'GET' ||
+    url.protocol === 'chrome-extension:'
+  ) {
+    return;
+  }
+
+  // 2. 정적 자산 및 페이지에 대해 Stale-While-Revalidate 전략 적용
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        // 유효한 응답인 경우 캐시 업데이트
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // 네트워크 실패 시 캐시된 응답 반환 (오프라인 지원)
+        return cachedResponse;
+      });
+
+      // 캐시된 응답이 있으면 즉시 반환, 없으면 네트워크 응답 대기
+      return cachedResponse || fetchPromise;
+    })
+  );
+});

@@ -33,7 +33,15 @@ export function PushNotificationManager() {
   useEffect(() => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
       setIsSupported(true);
-      registerServiceWorker();
+      
+      // 페이지 로드가 완전히 완료된 후에 서비스 워커를 등록하여 초기 성능 저하 방지
+      if (document.readyState === 'complete') {
+        registerServiceWorker();
+      } else {
+        const handleLoad = () => registerServiceWorker();
+        window.addEventListener('load', handleLoad);
+        return () => window.removeEventListener('load', handleLoad);
+      }
     }
   }, []);
 
