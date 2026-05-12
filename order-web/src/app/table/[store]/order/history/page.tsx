@@ -1,7 +1,7 @@
-export default function OrderHistory() {
+export default function OrderFail() {
   return (
     <div>
-      <div>OrderHistory</div>
+      <div>OrderFail</div>
     </div>
   );
 }
