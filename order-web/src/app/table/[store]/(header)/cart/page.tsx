@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
 
 export default function Cart({
   params,
@@ -14,7 +15,13 @@ export default function Cart({
   const router = useRouter();
   const [isEmpty, setIsEmpty] = useState(false);
   const [myBasket, setMyBasket] = useState(null);
-  const [memberBasket, setMemberBasket] = useState(null);
+  const [memberBasket, setMemberBasket] = useState([
+    {
+      product_name: "바질 통밀 샌드위치",
+      price: 12000,
+      count: 1,
+    },
+  ]);
   const [recommendedPairings, setRecommendedPairings] = useState([
     {
       src: "/img/menu-order/menu_img_ex1.png",
@@ -47,6 +54,7 @@ export default function Cart({
       discount_rate: 0,
     },
   ]);
+
   // layout의 상단 장바구니 를 h1 태그로 변동
   return (
     <div className="w-full">
@@ -73,16 +81,84 @@ export default function Cart({
       ) : (
         <div>
           {/* // 내 메뉴 */}
-          <div>
-            <h2>내 메뉴</h2>
-            {myBasket ? "" : ""}
+          <div className="px-[1.5em]">
+            <h2 className="font-bold text-[1.25em] mb-[0.8em]">내 메뉴</h2>
+            {myBasket ? (
+              ""
+            ) : (
+              <div>
+                <p className="font-medium text-[#B4B4B4]">담은 메뉴가 없어요</p>
+              </div>
+            )}
           </div>
+          <hr className="h-[1em] bg-[#F2F3F6] border-0 mt-[1em] mb-[2em]" />
           {/* // 멤버 메뉴 */}
-          <div>
-            <h2>멤버 메뉴</h2>
-            {memberBasket ? "" : ""}
-            <div>
-              <p>메뉴 추가 +</p>
+          <div className="px-[1.5em]">
+            <h2 className="font-bold text-[1.25em] mb-[0.8em]">멤버 메뉴</h2>
+            {memberBasket ? (
+              <ul className="">
+                {memberBasket.map((value, key) => (
+                  <li className="pb-[1.5em] mb-[1.5em] border-b-1 border-b-[#F3F3F3]" key={key}>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3>{value.product_name}</h3>
+                        <p>{value.price}</p>
+                      </div>
+                      <div
+                        className="text-[1.25em] bg-[#D9D9D9] inline-block rounded-full p-[0.25em]"
+                        onClick={() => {
+                          // 여기를 클릭하면 해당 메뉴는 삭제되어야 함.
+                        }}
+                      >
+                        <IoClose className="text-[#FFFFFF]" />
+                      </div>
+                    </div>
+                    <div className="flex justify-end items-stretch gap-x-[0.5em]">
+                      <button className="font-semibold text-[1.125em] bg-[#F2F3F6] rounded-[0.75em] px-[0.8em]">옵션변경</button>
+                      <div className="text-[14px] flex items-center bg-[#F2F3F6] rounded-[0.75em] py-[0.3125em]">
+                        {/* min 값 되면 작동안하게 */}
+                        <button
+                          className={`w-[2em] h-[2em] flex items-center justify-center text-[1.25em]`}
+                          // disabled={minMainCount >= mainCount}
+                          onClick={() =>
+                            // setMainCount(Math.max(minMainCount, mainCount - 1))
+                            {}
+                          }
+                        >
+                          <span className={`mb-1 `}>−</span>
+                        </button>
+
+                        <div className="bg-[#FFFFFF] h-[3em] w-[3em] rounded-[0.5em] shadow-sm shadow-[0_0.125em_0.25em_rgba(0,0,0,0.25)] min-w-[2.5em] flex items-center justify-center">
+                          <span className="text-[1.25em] font-semibold text-[#2D3436]">
+                            {/* {mainCount} */}
+                          </span>
+                        </div>
+
+                        {/* max 값 되면 작동안하게 */}
+                        <button
+                          className={`w-[2em] h-[2em] flex items-center justify-center text-[1.25em]`}
+                          // disabled={maxMainCount <= mainCount}
+                          onClick={() =>
+                            // setMainCount(Math.min(maxMainCount, mainCount + 1))
+                            {}
+                          }
+                        >
+                          <span>+</span>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div>
+                <p className="font-medium text-[#B4B4B4]">담은 메뉴가 없어요</p>
+              </div>
+            )}
+            <div className="">
+              <p className="text-center font-semibold text-[1.125em]">
+                메뉴 추가 +
+              </p>
             </div>
           </div>
           {/* // 광고 */}
