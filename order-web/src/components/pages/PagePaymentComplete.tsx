@@ -5,7 +5,7 @@ import HeaderView from "../HeaderView";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function name() {
+export default function PagePaymentComplete() {
   const [orderContent, setOrderContent] = useState([]);
   const router = useRouter();
   return (
