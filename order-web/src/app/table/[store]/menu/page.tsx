@@ -10,7 +10,8 @@ export default async function Menupage({
 
   return (
     <div>
-      <PageMenuList params={params} initialData={storeData} />
+      {/* <PageMenuList params={params} initialData={storeData} /> */}
+      <PageMenuList params={params} />
     </div>
   );
 }

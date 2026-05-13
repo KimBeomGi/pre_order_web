@@ -1,7 +1,8 @@
+import PageOrderInProgress from "@/components/pages/PageOrderInProgress"
 export default function OrderInProgress() {
   return (
     <div>
-      <div>주문중</div>
+      <PageOrderInProgress />
     </div>
   );
 }
