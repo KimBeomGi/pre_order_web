@@ -1,5 +1,11 @@
 "use client";
-import { useState, useEffect, useRef, Fragment } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  Fragment,
+  useCallback,
+} from "react";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { BsDownload } from "react-icons/bs";
@@ -7,14 +13,36 @@ import { getReceiptData } from "@/app/api/store";
 import { ReceiptData } from "@/types/store";
 import receiptDataSkeleton from "@/temp_data/receiptDataSkeleton.json";
 
+import { toPng } from "html-to-image";
+
 export default function PageReceiptDetail() {
   const params = useParams();
   const receiptId = params?.id;
-  const receiptContent = useRef<HTMLDivElement>(null);
+  const receiptContentRef = useRef<HTMLDivElement>(null);
   const [orderContent, setOrderContent] =
     useState<ReceiptData>(receiptDataSkeleton);
   const [isHideOrderDetail, setIsHideOrderDetail] = useState(false);
 
+  // 영수증 다운로드
+  const receiptDownload = useCallback(() => {
+    if (receiptContentRef.current === null) {
+      return;
+    }
+
+    toPng(receiptContentRef.current, { cacheBust: true })
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.download = "my-image-name.png";
+        link.href = dataUrl;
+        link.click();
+        toast.success("결제 영수증 다운로드");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [receiptContentRef]);
+
+  // 영수증 데이터 받아오기
   async function handleGetReceiptData(id: number) {
     try {
       const data = await getReceiptData(id);
@@ -31,10 +59,10 @@ export default function PageReceiptDetail() {
     }
   }, [receiptId]);
   return (
-    <div className="p-[1.5em] min-h-screen">
+    <div className="pt-[1.5em] min-h-screen">
       <h1 className="sr-only">결제 영수증</h1>
       {/* 헤더부분 주문내역 가리기 */}
-      <div className="flex flex-row items-center justify-end gap-x-[0.5em]">
+      <div className="flex flex-row items-center justify-end gap-x-[0.5em] px-[1.5em]">
         <p
           className="cursor-pointer text-[1.25em] font-medium active:opacity-50 transition-opacity"
           onClick={() => {
@@ -46,14 +74,17 @@ export default function PageReceiptDetail() {
         <div
           className="cursor-pointer bg-[#E6E7EB] rounded-[0.25em] w-[1.5em] h-[1.5em] flex justify-center items-center active:opacity-50 transition-opacity"
           onClick={() => {
-            toast.success("결제 영수증 다운로드");
+            receiptDownload();
           }}
         >
           <BsDownload className="inline-block text-[1em]" />
         </div>
       </div>
       {/* 주문내역 */}
-      <div ref={receiptContent} className="recipt-content mt-[1.5em] mb-[2em]">
+      <div
+        ref={receiptContentRef}
+        className="recipt-content px-[1.5em] pt-[1.5em] pb-[2em] bg-[#FFFFFF]"
+      >
         {/* 상단 간단 요약 */}
         <div className="mb-[1rem]">
           <h2 className="font-semibold text-[1.125rem] mb-[0.5em]">
@@ -127,14 +158,13 @@ export default function PageReceiptDetail() {
                       return (
                         <tr className="" key={discountKey}>
                           <th
-                            className="text-left text-[#6C7A88] font-normal"
+                            className="text-left text-[#FF0000] font-normal"
                             colSpan={3}
                           >
                             {discount.content}
-                            
                           </th>
-                          <td className="text-right">
-                            {discount.amount.toLocaleString()}
+                          <td className="text-right font-normal text-[#FF0000]">
+                            {(discount.amount * -1).toLocaleString()}
                           </td>
                           {/* <td className="text-right">{option.price}</td> */}
                         </tr>
