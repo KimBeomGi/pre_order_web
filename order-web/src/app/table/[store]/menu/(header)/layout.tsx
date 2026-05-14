@@ -6,7 +6,7 @@ export default function StoreHeaderLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="text-[16px]">
+    <section className="text-[1rem]">
       <HeaderView />
       {children}
     </section>

@@ -24,22 +24,40 @@ export default function PageReceiptDetail() {
   const [isHideOrderDetail, setIsHideOrderDetail] = useState(false);
 
   // 영수증 다운로드
-  const receiptDownload = useCallback(() => {
-    if (receiptContentRef.current === null) {
-      return;
-    }
+  const receiptDownload = useCallback(async () => {
+    if (receiptContentRef.current === null) return;
 
-    toPng(receiptContentRef.current, { cacheBust: true })
-      .then((dataUrl) => {
-        const link = document.createElement("a");
-        link.download = "my-image-name.png";
-        link.href = dataUrl;
-        link.click();
-        toast.success("결제 영수증 다운로드");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const loadingToast = toast.loading("영수증을 생성 중입니다...");
+
+    try {
+      const options = {
+        cacheBust: true,
+        backgroundColor: "#FFFFFF",
+        pixelRatio: 2, // 고해상도 모바일 기기에서의 메모리 부족 방지
+      };
+
+      // 첫 번째 호출이 무시되는 현상 방지
+      await toPng(receiptContentRef.current, options);
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      // 실제 데이터 생성
+      const dataUrl = await toPng(receiptContentRef.current, options);
+
+      // 다운로드 실행
+      const link = document.createElement("a");
+      link.download = `결제_영수증_${new Date().getTime()}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.dismiss(loadingToast);
+      toast.success("결제 영수증 다운로드 완료");
+    } catch (err) {
+      console.error("Download Error:", err);
+      toast.dismiss(loadingToast);
+      toast.error("다운로드 중 오류가 발생했습니다.");
+    }
   }, [receiptContentRef]);
 
   // 영수증 데이터 받아오기
@@ -83,7 +101,7 @@ export default function PageReceiptDetail() {
       {/* 주문내역 */}
       <div
         ref={receiptContentRef}
-        className="recipt-content px-[1.5em] pt-[1.5em] pb-[2em] bg-[#FFFFFF]"
+        className="recipt-content px-[1.5em] pt-[1.5em] pb-[2em]"
       >
         {/* 상단 간단 요약 */}
         <div className="mb-[1rem]">
@@ -99,93 +117,111 @@ export default function PageReceiptDetail() {
         </div>
         {/* 메뉴 정보 */}
         <table className="w-full text-[0.875rem] border-t-3 border-b border-[#222F4A]">
-          <thead className="">
-            <tr className="">
-              <th className="py-[0.25em] text-left font-medium" scope="col">
-                메뉴명
-              </th>
-              <th className="py-[0.25em] text-right font-medium" scope="col">
-                단가
-              </th>
-              <th className="py-[0.25em] text-right font-medium" scope="col">
-                수량
-              </th>
-              <th className="py-[0.25em] text-right font-medium" scope="col">
-                금액
-              </th>
-            </tr>
-          </thead>
-          <tbody className="border-t border-b border-[#222F4A]">
-            {orderContent.menus.map((menu, key) => {
-              return (
-                <Fragment key={key}>
-                  <tr className="">
-                    <th
-                      className="py-[0.375em] text-left font-semibold"
-                      scope="row"
-                    >
-                      {menu.product_name}
-                    </th>
-                    <td className="py-[0.375em] text-right">
-                      {menu.price.toLocaleString()}
-                    </td>
-                    <td className="py-[0.375em] text-right">
-                      {menu.count.toLocaleString()}
-                    </td>
-                    <td className="py-[0.375em] text-right">
-                      {menu.item_total.toLocaleString()}
-                    </td>
-                  </tr>
+          {!isHideOrderDetail && (
+            <Fragment>
+              <thead className="">
+                <tr className="">
+                  <th className="py-[0.25em] text-left font-medium" scope="col">
+                    메뉴명
+                  </th>
+                  <th
+                    className="py-[0.25em] text-right font-medium"
+                    scope="col"
+                  >
+                    단가
+                  </th>
+                  <th
+                    className="py-[0.25em] text-right font-medium"
+                    scope="col"
+                  >
+                    수량
+                  </th>
+                  <th
+                    className="py-[0.25em] text-right font-medium"
+                    scope="col"
+                  >
+                    금액
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                className="
+                border-t border-b border-[#222F4A]
+                [&>tr:first-child>th]:pt-[1em] [&>tr:first-child>td]:pt-[1em]
+                [&>tr:last-child>th]:pb-[1em] [&>tr:last-child>td]:pb-[1em]"
+              >
+                {orderContent.menus.map((menu, key) => {
+                  return (
+                    <Fragment key={key}>
+                      <tr className="">
+                        <th
+                          className="py-[0.375em] text-left font-semibold"
+                          scope="row"
+                        >
+                          {menu.product_name}
+                        </th>
+                        <td className="py-[0.375em] text-right">
+                          {menu.price.toLocaleString()}
+                        </td>
+                        <td className="py-[0.375em] text-right">
+                          {menu.count.toLocaleString()}
+                        </td>
+                        <td className="py-[0.375em] text-right">
+                          {menu.item_total.toLocaleString()}
+                        </td>
+                      </tr>
 
-                  {menu.options.length > 0 &&
-                    menu.options.map((option, optionKey) => {
-                      return (
-                        <tr className="" key={optionKey}>
-                          <th
-                            className="text-left text-[#6C7A88] font-normal"
-                            colSpan={4}
-                          >
-                            └ {option.name}
-                            {option.price !== 0 &&
-                              `(${option.price.toLocaleString()})`}
-                          </th>
-                          {/* <td className="text-right">{option.price}</td> */}
-                        </tr>
-                      );
-                    })}
-                  {menu.discounts.length > 0 &&
-                    menu.discounts.map((discount, discountKey) => {
-                      return (
-                        <tr className="" key={discountKey}>
-                          <th
-                            className="text-left text-[#FF0000] font-normal"
-                            colSpan={3}
-                          >
-                            {discount.content}
-                          </th>
-                          <td className="text-right font-normal text-[#FF0000]">
-                            {(discount.amount * -1).toLocaleString()}
-                          </td>
-                          {/* <td className="text-right">{option.price}</td> */}
-                        </tr>
-                      );
-                    })}
-                </Fragment>
-              );
-            })}
-          </tbody>
+                      {menu.options.length > 0 &&
+                        menu.options.map((option, optionKey) => {
+                          return (
+                            <tr className="" key={optionKey}>
+                              <th
+                                className="text-left text-[#6C7A88] font-normal"
+                                colSpan={4}
+                              >
+                                └ {option.name}
+                                {option.price !== 0 &&
+                                  `(${option.price.toLocaleString()})`}
+                              </th>
+                              {/* <td className="text-right">{option.price}</td> */}
+                            </tr>
+                          );
+                        })}
+                      {menu.discounts.length > 0 &&
+                        menu.discounts.map((discount, discountKey) => {
+                          return (
+                            <tr className="" key={discountKey}>
+                              <th
+                                className="text-left text-[#FF0000] font-normal"
+                                colSpan={3}
+                              >
+                                {discount.content}
+                              </th>
+                              <td className="text-right font-normal text-[#FF0000]">
+                                {(discount.amount * -1).toLocaleString()}
+                              </td>
+                              {/* <td className="text-right">{option.price}</td> */}
+                            </tr>
+                          );
+                        })}
+                    </Fragment>
+                  );
+                })}
+              </tbody>
+            </Fragment>
+          )}
           {orderContent.summary.order_amount !==
           orderContent.summary.final_amount ? (
             <tfoot>
               <tr>
                 <th
-                  className="pt-[1rem] text-left font-normal text-[0.75rem]"
+                  className="pt-[0.5rem] text-left font-normal text-[0.75rem]"
                   scope="row"
                   colSpan={3}
                 >
                   주문금액
                 </th>
-                <td className="pt-[1rem] text-right text-[0.75rem]">
+                <td className="pt-[0.5rem] text-right text-[0.75rem]">
                   {orderContent.summary.order_amount.toLocaleString()}
                 </td>
               </tr>
@@ -203,13 +239,13 @@ export default function PageReceiptDetail() {
               </tr>
               <tr>
                 <th
-                  className="py-[1rem] text-left font-semibold"
+                  className="py-[0.5rem] text-left font-semibold"
                   scope="row"
                   colSpan={3}
                 >
                   결제금액
                 </th>
-                <td className="py-[1rem] text-right font-semibold">
+                <td className="py-[0.5rem] text-right font-semibold">
                   {orderContent.summary.final_amount.toLocaleString()}
                 </td>
               </tr>
