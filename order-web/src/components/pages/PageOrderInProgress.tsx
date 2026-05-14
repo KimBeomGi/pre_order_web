@@ -33,7 +33,8 @@ export default function PageCheckOrder() {
         // 전송 성공 시 완료 페이지로 이동
         if (store) {
           // 선결제 후결제에 따라 보내는 곳이 달라야함.
-          router.push(`/table/${store}/order/complete`);
+          // router.push(`/table/${store}/order/complete`);
+          router.push(`/table/${store}/payment/complete`); // 우선 결제 완료로 보내기
         }
       } catch (error) {
         console.error("주문 전송 중 오류 발생:", error);

@@ -1,0 +1,41 @@
+{
+  "is_recommend": false,
+  "recommend": [
+    {
+      "img_src": "",
+      "product_name": "",
+      "price": 0,
+      "discount_rate": 0,
+      "id": 0
+    }
+  ],
+  "staff_menu": [],
+  "categories": [],
+  "store_info": {
+    "store_name": "",
+    "store_address": "",
+    "country_origin": []
+  },
+  "notice": [
+    {
+      "status": "",
+      "title": "",
+      "message": ""
+    }
+  ],
+  "menu": [
+    {
+      "category": "",
+      "product_name": "",
+      "price": 0,
+      "badge": false,
+      "badge_content": "",
+      "badge_color": "",
+      "discount_rate": 0,
+      "description": "",
+      "img_src": "",
+      "is_soldout": false,
+      "id": 0
+    }
+  ]
+}

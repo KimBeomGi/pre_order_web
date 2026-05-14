@@ -1,0 +1,30 @@
+{
+  "history": [
+    {
+      "order_time": "0000-00-00T00:00:00",
+      "menus": [
+        {
+          "product_name": "",
+          "price": 0,
+          "count": 0,
+          "item_total": 0,
+          "discounts": [
+            { "content": "할인 항목 정보", "amount": 0 }
+          ],
+          "options": [
+            { "name": "기본 옵션 정보", "price": 0 },
+            { "name": "추가 옵션 정보", "price": 0 }
+          ]
+        },
+        {
+          "product_name": "",
+          "price": 0,
+          "count": 0,
+          "item_total": 0,
+          "discounts": [],
+          "options": []
+        }
+      ]
+    }
+  ]
+}

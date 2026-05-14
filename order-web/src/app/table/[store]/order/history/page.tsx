@@ -1,7 +1,9 @@
-export default function OrderFail() {
+import PageOrderHistory from "@/components/pages/PageOrderHistory";
+
+export default function OrderHistory() {
   return (
     <div>
-      <div>OrderFail</div>
+      <PageOrderHistory/>
     </div>
   );
 }

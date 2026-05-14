@@ -92,3 +92,39 @@ export interface ReceiptFooter {
   phone_number: string; // 대표 번호
   address: string; // 사업장 주소
 }
+
+
+
+
+// 주문 옵션 (예: 샷 추가, 사이즈업 등)
+export interface OrderOption {
+  name: string;
+  price: number;
+}
+
+// 할인 정보
+export interface Discount {
+  content: string;
+  amount: number;
+}
+
+// 개별 메뉴 정보
+export interface Menu {
+  product_name: string;
+  price: number;
+  count: number;
+  item_total: number;
+  discounts: Discount[];
+  options: OrderOption[];
+}
+
+// 개별 주문 내역 (시간대별 그룹)
+export interface OrderHistoryItem {
+  order_time: string; // ISO 8601 형식
+  menus: Menu[];
+}
+
+// 전체 히스토리 데이터 구조
+export interface RootOrderData {
+  history: OrderHistoryItem[];
+}

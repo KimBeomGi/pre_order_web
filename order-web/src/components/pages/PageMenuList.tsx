@@ -6,6 +6,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import ModalWindow from "@/components/ModalWindow";
 import ModalBottomWindow from "@/components/ModalBottomWindow";
 import { getStoreData } from "@/app/api/store";
+import storeDataSkeleton from "@/temp_data/storeDataSkeleton.json";
 import { StoreData } from "@/types/store";
 
 export default function PageMenuList({
@@ -31,20 +32,21 @@ export default function PageMenuList({
 
   const [orderDetails, setOrderDetails] = useState(2);
   const [coViewerCount, setCoViewerCount] = useState(0);
-  const [storeData, setStoreData] = useState<StoreData | null>(null);
+  const [storeData, setStoreData] = useState<StoreData>(storeDataSkeleton);
+  const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
 
-  const getAPIStoreData = async () => {
+  async function handleGetStoreData() {
     try {
       const response = await getStoreData();
       setStoreData(response);
-      setStaffMenu((prev) => [...prev, ...(response?.staff_menu ?? [])]);
-    } catch (error) {
-      console.log("연결에 실패했습니다.");
-    }
-  };
+      setStaffMenu([...staffMenu, ...response.staff_menu]);
+    } catch (error) {}
+  }
+  useEffect(() => {
+    handleGetStoreData();
+  }, []);
 
   useEffect(() => {
-    getAPIStoreData();
     if (!categoryBarRef.current) return;
     setCategoryBarHeight(categoryBarRef.current.offsetHeight);
   }, []);
@@ -118,14 +120,6 @@ export default function PageMenuList({
     }
   }
 
-  if (!storeData) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        로딩 중...
-      </div>
-    );
-  }
-
   return (
     <div className="bg-[#ECEDEF] text-[15px] relative w-full">
       <div className="relative z-0">
@@ -175,9 +169,10 @@ export default function PageMenuList({
               </div>
               <div>
                 <div
-                  className="relative"
+                  className="relative active:opacity-50"
                   onClick={() => {
                     console.log("주문내역");
+                    router.push(`/table/${store}/order/history`)
                   }}
                 >
                   <img
@@ -197,9 +192,7 @@ export default function PageMenuList({
             </div>
             <div className="text-[15px] mt-[0.8em] flex flex-row justify-between">
               <div className="flex flex-row items-end justify-center gap-[0.5em]">
-                <h2 className="text-[2em] font-extrabold">
-                  {store}
-                </h2>
+                <h2 className="text-[2em] font-extrabold">{store}</h2>
                 <p className="">TABLE 01</p>
               </div>
               <div className="flex flex-row gap-x-[0.5em]">
@@ -328,92 +321,98 @@ export default function PageMenuList({
             </button>
           </div>
           <div className="text-[15px]">
-            <div className="flex flex-col gap-y-[1em]">
+            <ul className="flex flex-col gap-y-[1em]">
               {storeData["categories"].map((value, key) => (
-                <ul key={key} className="bg-[#FFFFFF] px-[1.6em] py-[1.6em]">
+                <li className="bg-[#FFFFFF] py-[1.6em]" key={key}>
                   <h4
-                    className="text-[1.2em] font-bold text-[#293448]"
+                    className="text-[1.2em] px-[1.6em] font-bold text-[#293448]"
                     ref={(el) => {
                       categoryRefs.current[key] = el;
                     }}
                   >
                     {value}
                   </h4>
-                  {storeData["menu"].map((product, menu_key) => (
-                    <Fragment key={menu_key}>
-                      {product.category === value ? (
-                        <li
-                          className={`py-[1em] border-b border-b-[#ECEDEF] last:border-b-0`}
-                          onTouchStart={() => {}}
-                          onClick={() => {
-                            router.push(
-                              `/table/${resolvedParams.store}/menu/${product.id}`,
-                            );
-                          }}
-                        >
-                          <div className="flex flex-row items-center justify-between">
+                  <ul className="">
+                    {storeData["menu"]
+                      .filter((product) => product.category === value)
+                      .map((product, menu_idx, filteredMenu) => {
+                        const isLast = menu_idx === filteredMenu.length - 1;
+                        return (
+                          <li
+                            key={product.id}
+                            className={`pt-[1em] rounded-[1em] transition-colors duration-75 ${activeMenuId === product.id ? "bg-[#F2F3F6]" : ""}`}
+                            onTouchStart={() => setActiveMenuId(product.id)}
+                            onTouchEnd={() => setActiveMenuId(null)}
+                            onTouchCancel={() => setActiveMenuId(null)}
+                            onClick={() => {
+                              router.push(
+                                `/table/${resolvedParams.store}/menu/${product.id}`,
+                              );
+                            }}
+                          >
                             <div
-                              className={`w-[6.66667em] h-[6.66667em] rounded-[0.5em] flex justify-center items-center relative overflow-hidden shrink-0`}
+                              className={`mx-[1.6em] pb-[1em] ${isLast ? "" : "border-b border-b-[#ECEDEF]"} flex flex-row items-center justify-between`}
                             >
-                              {product.img_src ? (
-                                <img
-                                  className="w-full h-full object-cover"
-                                  src={product.img_src}
-                                  alt=""
-                                />
-                              ) : (
-                                <p className="text-[1.6em]">
-                                  이미지<br></br>준비중
-                                </p>
-                              )}
-                              {product.is_soldout ? (
-                                <div className="absolute w-full h-full bg-[#D2D2D2B2] left-0 top-0"></div>
-                              ) : (
-                                ""
-                              )}
-                            </div>
-                            <div className="w-[65%]">
-                              {product.is_soldout ? (
-                                <div
-                                  className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
-                                  style={{ backgroundColor: "#525A67" }}
-                                >
-                                  품절
-                                </div>
-                              ) : product.badge ? (
-                                <div
-                                  className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
-                                  style={{
-                                    backgroundColor: product.badge_color,
-                                  }}
-                                >
-                                  {product.badge_content}
-                                </div>
-                              ) : (
-                                ""
-                              )}
-
-                              <h5
-                                className={`text-[1.2em] ${product.is_soldout ? "opacity-50" : ""} text-[#293448] font-semibold`}
+                              <div
+                                className={`w-[6.66667em] h-[6.66667em] rounded-[0.5em] flex justify-center items-center relative overflow-hidden shrink-0`}
                               >
-                                {product.product_name}
-                                <br />
-                                {product.price.toLocaleString()}원
-                              </h5>
-                              <p className="text-[0.86666em] text-[#6C7A88]">
-                                {product.description}
-                              </p>
+                                {product.img_src ? (
+                                  <img
+                                    className="w-full h-full object-cover"
+                                    src={product.img_src}
+                                    alt=""
+                                  />
+                                ) : (
+                                  <p className="text-[1.6em]">
+                                    이미지<br></br>준비중
+                                  </p>
+                                )}
+                                {product.is_soldout ? (
+                                  <div className="absolute w-full h-full bg-[#D2D2D2B2] left-0 top-0"></div>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                              <div className="w-[65%]">
+                                {product.is_soldout ? (
+                                  <div
+                                    className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
+                                    style={{ backgroundColor: "#525A67" }}
+                                  >
+                                    품절
+                                  </div>
+                                ) : product.badge ? (
+                                  <div
+                                    className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
+                                    style={{
+                                      backgroundColor: product.badge_color,
+                                    }}
+                                  >
+                                    {product.badge_content}
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+
+                                <h5
+                                  className={`text-[1.2em] ${product.is_soldout ? "opacity-50" : ""} text-[#293448] font-semibold`}
+                                >
+                                  {product.product_name}
+                                  <br />
+                                  {product.price.toLocaleString()}원
+                                </h5>
+                                <p className="text-[0.86666em] text-[#6C7A88]">
+                                  {product.description}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </li>
-                      ) : (
-                        <></>
-                      )}
-                    </Fragment>
-                  ))}
-                </ul>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
         <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em] mb-[6em]">
