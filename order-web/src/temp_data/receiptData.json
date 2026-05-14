@@ -1,0 +1,207 @@
+{
+  "store_name": "왕고래 카페",
+  "order_number": "테-001",
+  "menus": [
+    {
+      "product_name": "루꼴라 크로와상 샌드위치",
+      "price": 7500,
+      "count": 10,
+      "item_total": 75000,
+      "discounts": [],
+      "options": []
+    },
+    {
+      "product_name": "아메리카노",
+      "price": 5000,
+      "count": 1,
+      "item_total": 8500,
+      "discounts": [{
+        "content": "오픈 기념 10%",
+        "amount": 850
+      }],
+      "options": [
+        {
+          "name": "두배 사이즈업",
+          "price": 3500
+        },
+        {
+          "name": "ICE",
+          "price": 0
+        },
+        {
+          "name": "구수한 블렌드 원두",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "product_name": "바닐라라떼",
+      "price": 5500,
+      "count": 5,
+      "item_total": 27500,
+      "discounts": [],
+      "options": [
+        {
+          "name": "ICE",
+          "price": 0
+        },
+        {
+          "name": "오리지널 원두",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "product_name": "루꼴라 크로와상 샌드위치",
+      "price": 7500,
+      "count": 1,
+      "item_total": 7500,
+      "discounts": [],
+      "options": [
+        {
+          "name": "치즈제외",
+          "price": 0
+        },
+        {
+          "name": "허니사워 소스 추가",
+          "price": 0
+        },
+        {
+          "name": "머스타드 소스 추가",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "product_name": "햄치즈 통밀 샌드위치",
+      "price": 7000,
+      "count": 4,
+      "item_total": 28000,
+      "discounts": [],
+      "options": [
+        {
+          "name": "랜치 소스 추가",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "product_name": "아메리카노",
+      "price": 5000,
+      "count": 1,
+      "item_total": 5000,
+      "discounts": [{
+        "content": "오픈 기념 10%",
+        "amount": 500
+      }],
+      "options": [
+        {
+          "name": "HOT",
+          "price": 0
+        },
+        {
+          "name": "오리지널 원두",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "product_name": "리뷰쓰고 마카롱 1개 받기",
+      "price": 0,
+      "count": 2,
+      "item_total": 0,
+      "discounts": [],
+      "options": []
+    },
+    {
+      "product_name": "햄치즈 통밀 샌드위치",
+      "price": 7000,
+      "count": 1,
+      "item_total": 7000,
+      "discounts": [],
+      "options": []
+    },
+    {
+      "product_name": "루꼴라 크로와상 샌드위치",
+      "price": 7500,
+      "count": 1,
+      "item_total": 7500,
+      "discounts": [],
+      "options": [
+        {
+          "name": "허니사워 소스 추가",
+          "price": 0
+        }
+      ]
+    },
+    {
+      "product_name": "티라미수 케이크",
+      "price": 6500,
+      "count": 2,
+      "item_total": 13000,
+      "discounts": [],
+      "options": []
+    },
+    {
+      "product_name": "딸기 연유 라떼",
+      "price": 6000,
+      "count": 1,
+      "item_total": 7000,
+      "discounts": [{
+        "content": "시즌 음료 할인",
+        "amount": 1000
+      }],
+      "options": [
+        {
+          "name": "타피오카 펄 추가",
+          "price": 500
+        },
+        {
+          "name": "에스프레소 샷 추가",
+          "price": 500
+        }
+      ]
+    },
+    {
+      "product_name": "페리에 탄산수 (레몬)",
+      "price": 3500,
+      "count": 3,
+      "item_total": 10500,
+      "discounts": [],
+      "options": []
+    },
+    {
+      "product_name": "에그마요 샌드위치",
+      "price": 6000,
+      "count": 1,
+      "item_total": 7000,
+      "discounts": [],
+      "options": [
+        {
+          "name": "빵 바삭하게 굽기",
+          "price": 0
+        },
+        {
+          "name": "피클 제외",
+          "price": 0
+        },
+        {
+          "name": "바삭 베이컨 추가",
+          "price": 1000
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "order_amount": 203500,
+    "discount_amount": 2350,
+    "final_amount": 201150
+  },
+  "footer": {
+    "company_name": "왕고래 카페",
+    "representative": "-",
+    "business_number": "504-12-34567",
+    "phone_number": "010-9876-5432",
+    "address": "서울특별시 강남구 테헤란로 131 (역삼동) 17층"
+  }
+}

@@ -32,7 +32,7 @@ export default function RootLayout({
             bottom: "3.8125em",
           }}
           toastOptions={{
-            duration: 10000,
+            duration: 3000,
           }}
         />
       </body>
