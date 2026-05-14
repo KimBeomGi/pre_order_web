@@ -5,40 +5,46 @@ import HeaderView from "../HeaderView";
 import { useEffect, useReducer, useState } from "react";
 import orderHistoryDataSkeleton from "@/temp_data/orderHistoryDataSkeleton.json";
 import { useRouter } from "next/navigation";
-import {RootOrderData} from "@/types/store"
+import { RootOrderData } from "@/types/store";
 
 export default function PagePaymentCheckOrder() {
   const router = useRouter();
-  const [orderHistory, setOrderHistory] = useState<RootOrderData>(orderHistoryDataSkeleton);
-  const [totalCount, setTotalCount] = useState(0)
-  const [totalAmount, setTotalAmount] = useState(0)
+  const [orderHistory, setOrderHistory] = useState<RootOrderData>(
+    orderHistoryDataSkeleton,
+  );
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
 
   async function handleGetOrderHistory() {
     try {
       const response = await getOrderHistory();
       setOrderHistory(response);
-      handleTotal(response)
+      handleTotal(response);
     } catch (error) {}
   }
 
-  function handleTotal(data:RootOrderData){
-    let itemCount = 0
-    let amountCount = 0
-    data.history.forEach(order => {
-      const orderItemCount = order.menus.reduce((acc, curr) => acc + curr.count, 0)
-      const orderAmountCount = order.menus.reduce((acc, curr) => acc + curr.item_total, 0)
-      itemCount += orderItemCount
-      amountCount += orderAmountCount
+  function handleTotal(data: RootOrderData) {
+    let itemCount = 0;
+    let amountCount = 0;
+    data.history.forEach((order) => {
+      const orderItemCount = order.menus.reduce(
+        (acc, curr) => acc + curr.count,
+        0,
+      );
+      const orderAmountCount = order.menus.reduce(
+        (acc, curr) => acc + curr.item_total,
+        0,
+      );
+      itemCount += orderItemCount;
+      amountCount += orderAmountCount;
     });
-    setTotalCount(itemCount)
-    setTotalAmount(amountCount)
+    setTotalCount(itemCount);
+    setTotalAmount(amountCount);
   }
 
   useEffect(() => {
     handleGetOrderHistory();
   }, []);
-
-  
 
   return (
     <div className="">
@@ -49,7 +55,7 @@ export default function PagePaymentCheckOrder() {
         </h2>
         <ul className="mb-[2em]">
           {orderHistory.history.map((order, orderKey) => {
-            let totalCount = order.menus.reduce(
+            const totalCount = order.menus.reduce(
               (acc, ord) => acc + ord.count,
               0,
             );
@@ -73,7 +79,7 @@ export default function PagePaymentCheckOrder() {
                 </div>
                 <ul className="space-y-[0.5em]">
                   {order.menus.map((menu, menuKey) => {
-                    let options: string[] = [];
+                    const options: string[] = [];
                     menu.options.forEach((option) => {
                       options.push(
                         `${option.name}(+${option.price.toLocaleString()}원)`,
@@ -105,7 +111,7 @@ export default function PagePaymentCheckOrder() {
           className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
           onClick={() => {
             // router.push(``);
-            router.push(`/table/store/order-in-progress`) ; //임시로 바로 결제 완료 했다치고 order-in-progress로 이동 
+            router.push(`/table/store/order-in-progress`); //임시로 바로 결제 완료 했다치고 order-in-progress로 이동
           }}
         >
           <span className="font-semibold text-[1.25em] text-[#FFFFFF]">

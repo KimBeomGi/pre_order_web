@@ -5,16 +5,41 @@ import HeaderView from "../HeaderView";
 import { useEffect, useReducer, useState } from "react";
 import orderHistoryDataSkeleton from "@/temp_data/orderHistoryDataSkeleton.json";
 import { useRouter } from "next/navigation";
+import { RootOrderData } from "@/types/store";
 
 export default function PageOrderHistory() {
   const router = useRouter();
-  const [orderHistory, setOrderHistory] = useState(orderHistoryDataSkeleton);
+  const [orderHistory, setOrderHistory] = useState<RootOrderData>(
+    orderHistoryDataSkeleton,
+  );
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
 
   async function handleGetOrderHistory() {
     try {
       const response = await getOrderHistory();
       setOrderHistory(response);
+      handleTotal(response);
     } catch (error) {}
+  }
+
+  function handleTotal(data: RootOrderData) {
+    let itemCount = 0;
+    let amountCount = 0;
+    data.history.forEach((order) => {
+      const orderItemCount = order.menus.reduce(
+        (acc, curr) => acc + curr.count,
+        0,
+      );
+      const orderAmountCount = order.menus.reduce(
+        (acc, curr) => acc + curr.item_total,
+        0,
+      );
+      itemCount += orderItemCount;
+      amountCount += orderAmountCount;
+    });
+    setTotalCount(itemCount);
+    setTotalAmount(amountCount);
   }
 
   useEffect(() => {
@@ -26,12 +51,11 @@ export default function PageOrderHistory() {
       <HeaderView rightType="none" />
       <div className="py-[2em]">
         <h2 className="px-[1rem] text-[1.875rem] font-bold">
-          {" "}
-          총 4개 48,000원
+          총 {totalCount}개 {totalAmount.toLocaleString()}원
         </h2>
         <ul className="mb-[2em]">
           {orderHistory.history.map((order, orderKey) => {
-            let totalCount = order.menus.reduce(
+            const totalCount = order.menus.reduce(
               (acc, ord) => acc + ord.count,
               0,
             );
@@ -55,7 +79,7 @@ export default function PageOrderHistory() {
                 </div>
                 <ul className="space-y-[0.5em]">
                   {order.menus.map((menu, menuKey) => {
-                    let options: string[] = [];
+                    const options: string[] = [];
                     menu.options.forEach((option) => {
                       options.push(
                         `${option.name}(+${option.price.toLocaleString()}원)`,
