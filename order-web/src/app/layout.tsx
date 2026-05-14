@@ -29,7 +29,7 @@ export default function RootLayout({
           position="bottom-center"
           containerStyle={{
             // 기본 1rem, 명시해주면, 명시해준대로.
-            bottom: "3.8125em",
+            bottom: "5rem",
           }}
           toastOptions={{
             duration: 3000,

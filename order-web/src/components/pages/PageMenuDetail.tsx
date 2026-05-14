@@ -512,14 +512,14 @@ export default function PageMenuDetail({
         onClick={() => {
           // 이버튼을 누르면 담기를 하면서 해당 메인 페이지인 목록으로 돌아가야하는군.
           router.push(`/table/${resolvedParams.store}/menu`);
-          toast(`장바구니에 메뉴를 추가했어요.`, {
+          toast.success(`장바구니에 메뉴를 추가했어요.`, {
             style: {
               color: "#222F4A",
               background: "rgba(255, 255, 255, 0.9)",
             },
             iconTheme: {
-              primary: "#713200",
-              secondary: "#FFFAEE",
+              primary: "#222F49",
+              secondary: "#FFFFFF",
             },
           });
         }}
