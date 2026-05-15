@@ -7,7 +7,8 @@ import ModalWindow from "@/components/ModalWindow";
 import ModalBottomWindow from "@/components/ModalBottomWindow";
 import { getStoreData } from "@/app/api/store";
 import storeDataSkeleton from "@/temp_data/storeDataSkeleton.json";
-import { StoreData } from "@/types/store";
+import { StoreData, StoreMenuListData } from "@/types/store";
+import toast from "react-hot-toast";
 
 export default function PageMenuList({
   params,
@@ -21,6 +22,8 @@ export default function PageMenuList({
   const categoryBarRef = useRef<HTMLDivElement | null>(null);
   const categoryContentRef = useRef<HTMLDivElement | null>(null);
   const categoryTabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isScrollingRef = useRef(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [categoryBarHeight, setCategoryBarHeight] = useState(0);
   const [isStoreNoticeModalOpen, setIsStoreNoticeModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -28,12 +31,15 @@ export default function PageMenuList({
   const [selectCategory, setSelectCategory] = useState(0);
   const [selectStaffMenu, setSelectStaffMenu] = useState(0);
   const [staffMenu, setStaffMenu] = useState<string[]>(["직원호출"]);
-  const isScrollingRef = useRef(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   const [orderDetails, setOrderDetails] = useState(2);
   const [coViewerCount, setCoViewerCount] = useState(0);
   const [storeData, setStoreData] = useState<StoreData>(storeDataSkeleton);
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
+
+  const [searchMenuList, setSearchMenuList] = useState<StoreMenuListData[]>([]);
 
   async function handleGetStoreData() {
     try {
@@ -115,24 +121,65 @@ export default function PageMenuList({
   async function requireCallStaff(content: { [key: string]: number }) {
     try {
       console.log(content);
+      toast.success("호출했어요");
     } catch (error) {
-      console.error("직원 호출 실패:", error);
+      toast.error("호출에 실패했어요");
     }
   }
 
+  useEffect(() => {
+    if (isSearchOpen && categoryBarRef.current) {
+      // categoryBarRef가 sticky 상태여서, categoryBarRef위에있으면 찾아가지만, 아래에 있으면 움직이지 않음
+      const targetTop =
+        categoryBarRef.current.getBoundingClientRect().top + window.scrollY;
+
+      isScrollingRef.current = true;
+      window.scrollTo({
+        top: targetTop,
+        behavior: "auto",
+      });
+      if (searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    }
+
+    if (isSearchOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSearchOpen]);
+
+  useEffect(() => {
+    if (searchValue) {
+      const wholeMenuList = storeData.menu;
+      const filteredMenuList = wholeMenuList.filter((menu) =>
+        menu.product_name.includes(searchValue),
+      );
+      console.log(filteredMenuList);
+      setSearchMenuList(filteredMenuList);
+    } else {
+      setSearchMenuList([]);
+    }
+  }, [searchValue]);
+
   return (
-    <div className="bg-[#ECEDEF] text-[15px] relative w-full">
+    <div className="bg-[#ECEDEF] text-[0.9375rem] relative w-full mb-[6rem]">
       <div className="relative z-0">
         <img
-          className="w-full h-[160px] object-cover object-center"
+          className="w-full h-[10rem] object-cover object-center"
           src="/img/menu-order/menu_top_intro.png"
           alt=""
         />
       </div>
-      <div className="relative z-0 -mt-[20px]">
-        <div className="bg-[#FFFFFF] rounded-t-[20px]">
-          <div className="px-[22px] pt-[30px]">
-            <div className="flex flex-row justify-between text-[15px]">
+      <div className="relative -mt-[1.25rem]">
+        <div className="bg-[#FFFFFF] rounded-t-[1.25rem]">
+          <div className="px-[1.375rem] pt-[1.875rem]">
+            <div className="flex flex-row justify-between text-[0.9375rem]">
               <div>
                 <button
                   className="font-semibold w-fit px-[0.6em] py-[0.46667em] rounded-[0.3334em] border-[#E5E5E5] border border-solid flex flex-row justify-center items-center gap-x-[0.6em]"
@@ -172,11 +219,11 @@ export default function PageMenuList({
                   className="relative active:opacity-50"
                   onClick={() => {
                     console.log("주문내역");
-                    router.push(`/table/${store}/order/history`)
+                    router.push(`/table/${store}/order/history`);
                   }}
                 >
                   <img
-                    className="w-[29px]"
+                    className="w-[1.8125rem]"
                     src="/img/order_details_icon.png"
                     alt=""
                   />
@@ -190,14 +237,15 @@ export default function PageMenuList({
                 </div>
               </div>
             </div>
-            <div className="text-[15px] mt-[0.8em] flex flex-row justify-between">
+            <div className="text-[0.9375rem] mt-[0.8em] flex flex-row justify-between">
               <div className="flex flex-row items-end justify-center gap-[0.5em]">
                 <h2 className="text-[2em] font-extrabold">{store}</h2>
                 <p className="">TABLE 01</p>
               </div>
+              {/* 다국어 지원을 위함 */}
               <div className="flex flex-row gap-x-[0.5em]">
                 <button
-                  className="font-semibold w-fit px-[0.6em] py-[0.46667em] rounded-[0.3334em] border-[#E5E5E5] border border-solid flex flex-row justify-center items-center gap-x-[0.6em] rounded-[0.3333em]"
+                  className="font-semibold w-fit px-[0.6em] py-[0.46667em] rounded-[0.3334em] border-[#E5E5E5] border border-solid flex flex-row justify-center items-center gap-x-[0.6em] rounded-[0.3333em] active:opacity-50"
                   onClick={() => {}}
                 >
                   <img
@@ -212,7 +260,7 @@ export default function PageMenuList({
             </div>
             <div className="pb-[1.2em]">
               <div
-                className="text-[15px] bg-[#F2F3F6] rounded-[1.53333em] flex flex-row gap-x-[0.5em] py-[0.66667em] px-[1em] mt-[1.8em]"
+                className="text-[0.875rem] bg-[#F2F3F6] rounded-[1.53333em] flex flex-row gap-x-[0.5em] py-[0.66667em] px-[1em] mt-[1.8em]"
                 onClick={() => {
                   setIsStoreNoticeModalOpen(!isStoreNoticeModalOpen);
                 }}
@@ -231,22 +279,22 @@ export default function PageMenuList({
             </div>
           </div>
           {storeData?.is_recommend ? (
-            <div className="text-[15px]">
+            <div className="text-[0.9375rem]">
               <div className="flex flex-row items-center gap-x-[0.6em] ml-[1em] mb-[1em]">
-                <span className="font-bold text-[1.2em] text-[#2A5BAD]">
+                <span className="font-bold text-[1.125rem] text-[#2A5BAD]">
                   추천메뉴
                 </span>
                 <span className="px-[0.3333em] bg-[#FDBB03] font-bold w-fit text-[#FFFFFF]">
                   PICK
                 </span>
               </div>
-              <div className="w-full">
-                <div className="overflow-hidden w-full">
-                  <div className="flex flex-row gap-x-[0.3333em]">
+              <div className="w-full px-[0.9375rem] overflow-hidden">
+                <div className=" w-full overflow-x-scroll no-scrollbar">
+                  <ul className="flex flex-row gap-x-[0.3333em] ">
                     {storeData["recommend"].map((value, key) => (
-                      <div
+                      <li
                         key={key}
-                        className="w-1/3"
+                        className="shrink-0 w-[33.333%] relative rounded-[0.3125rem] overflow-hidden active:opacity-80"
                         onClick={() => {
                           router.push(
                             `/table/${resolvedParams.store}/menu/${value.id}`,
@@ -258,15 +306,17 @@ export default function PageMenuList({
                           src={value.img_src}
                           alt=""
                         />
-                        <p className="font-semibold text-[#000000]">
-                          {value.product_name}
-                        </p>
-                        <p className="font-semibold text-[#B4B4B4] text-[0.86667em]">
-                          {value.price.toLocaleString()}원
-                        </p>
-                      </div>
+                        <div className={`absolute top-0 left-0 p-[0.125rem] w-full h-full bg-[#00000033]`}>
+                          <p className="font-semibold text-[#FFFFFF] text-[0.75rem]">
+                            {value.product_name}
+                          </p>
+                          <p className="font-semibold text-[#FFFFFF] text-[0.75rem]">
+                            {value.price.toLocaleString()}원
+                          </p>
+                        </div>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -274,25 +324,55 @@ export default function PageMenuList({
             ""
           )}
         </div>
-        <div className="text-[15px]">
+        {/* 카테고리바+메뉴리스트 */}
+        <div className="text-[0.9375rem]">
+          {/* 카테고리바 */}
           <div
             ref={categoryBarRef}
-            className="flex flex-row items-center justify-between pl-[0.66667em] pr-[1em] bg-[#FFFFFF] sticky top-0 z-10"
+            className={`h-[3.125rem] flex flex-row items-center justify-between px-[1em] py-[0.625rem] bg-[#FFFFFF] sticky top-0 ${isSearchOpen ? "z-[110]" : "z-30"}`}
           >
-            <button
-              className="text-[1.2em] text-[#373737] px-[0.66667em] py-[0.27778em] bg-[#F5F5F5] rounded-[0.55556em]"
-              onClick={() => {}}
-            >
-              <FaMagnifyingGlass />
-            </button>
+            {/* 검색창 */}
+            <div className="flex flex-row items-center">
+              <div
+                className={`transition-all duration-150 flex flex-row items-center text-[1rem] px-[0.75em] py-[0.3125em] bg-[#F5F5F5] rounded-[0.625em] h-[29px] w-[2.5rem] ${isSearchOpen && "w-[20.625rem]"}`}
+                onClick={() => {
+                  setIsSearchOpen(true);
+                }}
+              >
+                <button className="active:scale-95">
+                  <FaMagnifyingGlass className="text-[#373737]" />
+                </button>
+                <input
+                  ref={searchInputRef}
+                  className={`focus:outline-0 invisible ${isSearchOpen && "pl-[0.5em] visible"}`}
+                  type="text"
+                  value={searchValue ?? ""}
+                  onChange={(e) => {
+                    setSearchValue(e.target.value);
+                  }}
+                  placeholder="어떤 메뉴를 찾으시나요?"
+                />
+              </div>
+              {isSearchOpen && (
+                <button
+                  className={`text-[1rem] text-nowrap w-[2.5rem]`}
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    setSearchValue("");
+                  }}
+                >
+                  취소
+                </button>
+              )}
+            </div>
             <div
               ref={categoryContentRef}
-              className="overflow-x-auto overflow-y-hidden no-scrollbar"
+              className={`overflow-x-auto overflow-y-hidden no-scrollbar`}
             >
               <div className="flex flex-row">
                 {storeData["categories"].map((value, key) => (
                   <div
-                    className={`shrink-0 text-[1.2em] border-b-2  p-[0.55556em] ${selectCategory === key ? "border-[#293448]" : "border-[#ECEDEF]"}`}
+                    className={`shrink-0 text-[1.125rem] border-b-2 px-[0.55556em] ${selectCategory === key ? "border-[#293448]" : "border-[#ECEDEF]"}`}
                     key={key}
                     ref={(el) => {
                       categoryTabRefs.current[key] = el;
@@ -312,7 +392,7 @@ export default function PageMenuList({
               </div>
             </div>
             <button
-              className="bg-[#F2F3F6] rounded-full p-[0.4em]"
+              className={`bg-[#F2F3F6] rounded-full p-[0.4em] ${isSearchOpen && "hidden"}`}
               onClick={() => {
                 setIsCategoryModalOpen(!isCategoryModalOpen);
               }}
@@ -320,7 +400,8 @@ export default function PageMenuList({
               <FaChevronDown className="text-[0.8em] text-[#848E9A]" />
             </button>
           </div>
-          <div className="text-[15px]">
+          {/* 메뉴리스트 */}
+          <div className="relative text-[0.9375rem]">
             <ul className="flex flex-col gap-y-[1em]">
               {storeData["categories"].map((value, key) => (
                 <li className="bg-[#FFFFFF] py-[1.6em]" key={key}>
@@ -415,7 +496,7 @@ export default function PageMenuList({
             </ul>
           </div>
         </div>
-        <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em] mb-[6em]">
+        <div className="flex flex-col text-[16px] p-[2em] gap-y-[1em]">
           <h2 className="text-[1.2em] font-semibold text-[#4C5868]">
             가게 정보 · 원산지
           </h2>
@@ -487,7 +568,7 @@ export default function PageMenuList({
       )}
 
       <button
-        className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
+        className={`text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]`}
         onClick={() => {
           router.push(`/table/${resolvedParams.store}/cart`);
         }}
@@ -499,6 +580,95 @@ export default function PageMenuList({
           65,000원 장바구니 보기
         </span>
       </button>
+      {isSearchOpen && (
+        <div
+          className="fixed inset-0 z-[100] w-full h-full bg-[#00000080] overflow-y-auto"
+          onClick={() => {
+            setIsSearchOpen(false);
+          }}
+        >
+          <ul
+            className={`max-w-[400px] py-[3.125rem] mx-auto ${searchMenuList.length > 0 && "bg-[#FFFFFF]"}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {searchMenuList.map((product, menu_idx) => {
+              const isLast = menu_idx === searchMenuList.length - 1;
+              return (
+                <li
+                  key={product.id}
+                  className={`pt-[1em] rounded-[1em] transition-colors duration-75 ${activeMenuId === product.id ? "bg-[#F2F3F6]" : ""}`}
+                  onTouchStart={() => setActiveMenuId(product.id)}
+                  onTouchEnd={() => setActiveMenuId(null)}
+                  onTouchCancel={() => setActiveMenuId(null)}
+                  onClick={() => {
+                    router.push(
+                      `/table/${resolvedParams.store}/menu/${product.id}`,
+                    );
+                    // setIsSearchOpen(false);
+                  }}
+                >
+                  <div
+                    className={`mx-[1.6em] pb-[1em] ${isLast ? "" : "border-b border-b-[#ECEDEF]"} flex flex-row items-center justify-between`}
+                  >
+                    <div
+                      className={`w-[6.66667em] h-[6.66667em] rounded-[0.5em] flex justify-center items-center relative overflow-hidden shrink-0`}
+                    >
+                      {product.img_src ? (
+                        <img
+                          className="w-full h-full object-cover"
+                          src={product.img_src}
+                          alt=""
+                        />
+                      ) : (
+                        <p className="text-[1.6em]">
+                          이미지<br></br>준비중
+                        </p>
+                      )}
+                      {product.is_soldout ? (
+                        <div className="absolute w-full h-full bg-[#D2D2D2B2] left-0 top-0"></div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                    <div className="w-[65%]">
+                      {product.is_soldout ? (
+                        <div
+                          className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
+                          style={{ backgroundColor: "#525A67" }}
+                        >
+                          품절
+                        </div>
+                      ) : product.badge ? (
+                        <div
+                          className={`badge w-fit rounded-full text-[#FFFFFF] font-bold py-[0.125em] px-[1em] mb-[0.5em]`}
+                          style={{
+                            backgroundColor: product.badge_color,
+                          }}
+                        >
+                          {product.badge_content}
+                        </div>
+                      ) : (
+                        ""
+                      )}
+
+                      <h5
+                        className={`text-[1.2em] ${product.is_soldout ? "opacity-50" : ""} text-[#293448] font-semibold`}
+                      >
+                        {product.product_name}
+                        <br />
+                        {product.price.toLocaleString()}원
+                      </h5>
+                      <p className="text-[0.86666em] text-[#6C7A88]">
+                        {product.description}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
@@ -515,7 +685,7 @@ export function StoreNotice({
   };
 
   return (
-    <div className="text-[15px]">
+    <div className="text-[0.9375rem]">
       {noticeData.map((noticeItem, index) => {
         const currentStyle = statusColors[noticeItem.status] || {
           bg: "#F5F5F5",

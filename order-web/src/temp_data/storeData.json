@@ -21,14 +21,28 @@
       "price": 13000,
       "discount_rate": 0,
       "id": 50
+    },
+    {
+      "img_src": "/img/menu-order/recommend_menu_img_ex4.png",
+      "product_name": "트러플 크림 뇨끼",
+      "price": 14000,
+      "discount_rate": 0,
+      "id": 60
+    },
+    {
+      "img_src": "/img/menu-order/recommend_menu_img_ex5.png",
+      "product_name": "갈릭 버터 쉬림프",
+      "price": 16000,
+      "discount_rate": 0,
+      "id": 70
     }
   ],
-  "staff_menu" : [
-   "컵",
-   "냅킨",
-   "숟가락",
-   "젓가락",
-   "컵"
+  "staff_menu": [
+    "컵",
+    "냅킨",
+    "숟가락",
+    "젓가락",
+    "컵"
   ],
   "categories": [
     "리뷰 이벤트",
@@ -178,6 +192,123 @@
       "img_src": "",
       "is_soldout": false,
       "id": 5891456
+    },
+    {
+      "category": "구이류",
+      "product_name": "짭조름한 삼치구이",
+      "price": 15000,
+      "badge": false,
+      "badge_content": "",
+      "badge_color": "",
+      "discount_rate": 0,
+      "description": "담백한 삼치살에 밥 한 공기 뚝딱",
+      "img_src": "/img/menu-order/menu_img_ex9.png",
+      "is_soldout": false,
+      "id": 200002
+    },
+    {
+      "category": "탕류",
+      "product_name": "얼큰 해물짬뽕탕",
+      "price": 22000,
+      "badge": true,
+      "badge_content": "HOT",
+      "badge_color": "#E03131",
+      "discount_rate": 0,
+      "description": "해산물 듬뿍, 얼큰하게 속 풀리는 국물",
+      "img_src": "/img/menu-order/menu_img_ex10.png",
+      "is_soldout": false,
+      "id": 200003
+    },
+    {
+      "category": "탕류",
+      "product_name": "맑은 조개탕",
+      "price": 18000,
+      "badge": false,
+      "badge_content": "",
+      "badge_color": "",
+      "discount_rate": 0,
+      "description": "깔끔하고 시원한 국물이 매력적인 조개탕",
+      "img_src": "/img/menu-order/menu_img_ex11.png",
+      "is_soldout": false,
+      "id": 200004
+    },
+    {
+      "category": "사이드메뉴",
+      "product_name": "바삭 감자튀김",
+      "price": 6000,
+      "badge": true,
+      "badge_content": "인기",
+      "badge_color": "#DA4352",
+      "discount_rate": 0,
+      "description": "가볍게 집어먹기 좋은 바삭한 감자튀김",
+      "img_src": "/img/menu-order/menu_img_ex12.png",
+      "is_soldout": false,
+      "id": 200005
+    },
+    {
+      "category": "사이드메뉴",
+      "product_name": "타코야끼 8알",
+      "price": 9000,
+      "badge": false,
+      "badge_content": "",
+      "badge_color": "",
+      "discount_rate": 0,
+      "description": "가쓰오부시가 춤추는 따끈한 타코야끼",
+      "img_src": "/img/menu-order/menu_img_ex13.png",
+      "is_soldout": false,
+      "id": 200006
+    },
+    {
+      "category": "음료",
+      "product_name": "콜라 500ml",
+      "price": 2500,
+      "badge": false,
+      "badge_content": "",
+      "badge_color": "",
+      "discount_rate": 0,
+      "description": "시원하게 마시기 좋은 기본 탄산음료",
+      "img_src": "/img/menu-order/menu_img_ex14.png",
+      "is_soldout": false,
+      "id": 200007
+    },
+    {
+      "category": "음료",
+      "product_name": "사이다 500ml",
+      "price": 2500,
+      "badge": false,
+      "badge_content": "",
+      "badge_color": "",
+      "discount_rate": 0,
+      "description": "청량함이 필요한 순간 딱 좋은 사이다",
+      "img_src": "/img/menu-order/menu_img_ex15.png",
+      "is_soldout": false,
+      "id": 200008
+    },
+    {
+      "category": "세트메뉴",
+      "product_name": "구이와 탕 반반 세트",
+      "price": 42000,
+      "badge": true,
+      "badge_content": "BEST",
+      "badge_color": "#7B61FF",
+      "discount_rate": 10,
+      "description": "구이류와 탕류를 한 번에 즐기는 든든한 세트",
+      "img_src": "/img/menu-order/menu_img_ex16.png",
+      "is_soldout": false,
+      "id": 200009
+    },
+    {
+      "category": "구이류",
+      "product_name": "노릇노릇 고등어구이",
+      "price": 14000,
+      "badge": true,
+      "badge_content": "추천",
+      "badge_color": "#FF8A00",
+      "discount_rate": 0,
+      "description": "겉은 바삭하고 속은 촉촉한 고등어구이",
+      "img_src": "/img/menu-order/menu_img_ex17.png",
+      "is_soldout": false,
+      "id": 200001
     }
   ]
 }

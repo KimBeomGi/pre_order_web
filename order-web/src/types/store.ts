@@ -34,6 +34,20 @@ export interface StoreData {
   }[];
 }
 
+export interface StoreMenuListData {
+  category: string;
+  product_name: string;
+  price: number;
+  badge: boolean;
+  badge_content: string;
+  badge_color: string;
+  discount_rate: number;
+  description: string;
+  img_src: string;
+  is_soldout: boolean;
+  id: number;
+}
+
 /**
  * 영수증 전체 데이터 구조
  */
@@ -92,9 +106,6 @@ export interface ReceiptFooter {
   phone_number: string; // 대표 번호
   address: string; // 사업장 주소
 }
-
-
-
 
 // 주문 옵션 (예: 샷 추가, 사이즈업 등)
 export interface OrderOption {
