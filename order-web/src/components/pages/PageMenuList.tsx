@@ -228,8 +228,8 @@ export default function PageMenuList({
                     alt=""
                   />
                   {orderDetails > 0 ? (
-                    <div className="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2  flex justify-center items-center w-[1.3333333em] h-[1.3333333em] bg-[#EF4444] text-[#FFFFFF] font-bold rounded-full">
-                      <p className="leading-1">{orderDetails}</p>
+                    <div className="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2  flex justify-center items-cente text-[0.9375rem] w-[1.3333333em] h-[1.3333333em] bg-[#EF4444] text-[#FFFFFF] font-bold rounded-full">
+                      <p className="leading-5">{orderDetails}</p>
                     </div>
                   ) : (
                     ""
@@ -246,7 +246,11 @@ export default function PageMenuList({
               <div className="flex flex-row gap-x-[0.5em]">
                 <button
                   className="font-semibold w-fit px-[0.6em] py-[0.46667em] rounded-[0.3334em] border-[#E5E5E5] border border-solid flex flex-row justify-center items-center gap-x-[0.6em] rounded-[0.3333em] active:opacity-50"
-                  onClick={() => {}}
+                  onClick={() => {
+                    toast("다국어 선택 작업 예정", {
+                      icon: '🐳'
+                    })
+                  }}
                 >
                   <img
                     className="w-[1.46667em]"

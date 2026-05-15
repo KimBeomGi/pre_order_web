@@ -18,7 +18,6 @@ export default function PageCart({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _store = decodeURIComponent(resolvedParams.store);
   const router = useRouter();
-  const [isEmpty, setIsEmpty] = useState(false);
   const [isPayModal, setIsPayModal] = useState(false);
   const [myBasket, setMyBasket] = useState([
     {
@@ -151,7 +150,7 @@ export default function PageCart({
 
   return (
     <div className="w-full mb-[5em]">
-      {isEmpty ? (
+      {(myBasket.length <= 0 && memberBasket.length <= 0) ? (
         <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-full flex flex-col justify-center items-center">
           <img
             className="w-[6.125em] object-contain"

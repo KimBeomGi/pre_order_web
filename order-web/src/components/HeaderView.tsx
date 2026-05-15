@@ -66,7 +66,7 @@ export default function HeaderView({
               className="flex items-center justify-center active:opacity-50 transition-opacity"
               aria-label="뒤로가기"
             >
-              <IoChevronBack className="text-[2em] text-[#24324D]" />
+              <IoChevronBack className="text-[2rem] text-[#24324D]" />
             </button>
           )}
 
@@ -76,14 +76,14 @@ export default function HeaderView({
               className="flex items-center justify-center active:opacity-50 transition-opacity"
               aria-label="메뉴"
             >
-              <IoMenu className="text-[2em] text-[#8B95A1]" />{" "}
-              <span className="ml-[0.375em] text-[#8B95A1] font-medium text-[1.375em]">메뉴판</span>
+              <IoMenu className="text-[2rem] text-[#8B95A1]" />{" "}
+              <span className="ml-[0.375em] text-[#8B95A1] font-medium text-[1.375rem]">메뉴판</span>
             </button>
           )}
 
           {/* 이미지 4번처럼 좌측 아이콘 바로 옆에 타이틀이 붙는 경우 */}
           {isTitleLeft && title && (
-            <h1 className="font-bold text-[1.25em] text-[#8B95A1] whitespace-nowrap">
+            <h1 className="font-bold text-[1.25rem] text-[#8B95A1] whitespace-nowrap">
               {title}
             </h1>
           )}
@@ -93,7 +93,7 @@ export default function HeaderView({
         {/* 좌측 정렬이 아닐 때만 중앙에 타이틀 표시 */}
         {!isTitleLeft && title && (
           <div className="absolute left-1/2 -translate-x-1/2">
-            <h1 className="font-bold text-[1.25em] text-[#24324D] whitespace-nowrap">
+            <h1 className="font-bold text-[1.25rem] text-[#24324D] whitespace-nowrap">
               {title}
             </h1>
           </div>
@@ -111,7 +111,7 @@ export default function HeaderView({
                 src="/img/order_details_icon.png"
                 alt="주문내역"
               />
-              <div className="absolute -right-1 -bottom-1 flex justify-center items-center w-[1.4em] h-[1.4em] bg-[#EF4444] text-[#FFFFFF] text-[10px] font-bold rounded-full border-[1.5px] border-white">
+              <div className="absolute -right-1 -bottom-1 flex justify-center items-center w-[1.4em] h-[1.4em] bg-[#EF4444] text-[#FFFFFF] text-[0.9375rem] font-bold rounded-full border-[1.5px] border-white">
                 <span className="leading-none">3</span>
               </div>
             </Link>

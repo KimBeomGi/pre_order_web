@@ -1,6 +1,15 @@
 "use client";
 import { FaCircleCheck } from "react-icons/fa6";
 import { FaChevronDown } from "react-icons/fa6";
+import dynamic from "next/dynamic";
+
+const Player = dynamic(
+  () => import("@lottiefiles/react-lottie-player").then((mod) => mod.Player),
+  {
+    ssr: false,
+    loading: () => <div className="w-[2.875rem] h-[2.875rem]" />,
+  },
+);
 
 import HeaderView from "../HeaderView";
 import { useState } from "react";
@@ -10,7 +19,7 @@ export default function PagePaymentComplete() {
   const router = useRouter();
   const params = useParams();
   const store = params?.store as string;
-  const [receiptId,setReceiptId] = useState(1000)
+  const [receiptId, setReceiptId] = useState(1000);
   const [orderContent, setOrderContent] = useState([
     {
       name: "시그니처 치즈 쉬림프 세트",
@@ -32,11 +41,24 @@ export default function PagePaymentComplete() {
 
   return (
     <div className="bg-[#F2F4F6] min-h-screen pb-[2em]">
-      <HeaderView leftType="menu" rightType="receipt" onMenuClick={() => {router.push(`/table/${store}/menu`)}} receiptId={receiptId}/>
+      <HeaderView
+        leftType="menu"
+        rightType="receipt"
+        onMenuClick={() => {
+          router.push(`/table/${store}/menu`);
+        }}
+        receiptId={receiptId}
+      />
       <h1 className="sr-only">결제 완료</h1>
       {/* 결제완료 표시 박스 */}
       <div className="flex flex-col items-center py-[2.5em]">
-        <FaCircleCheck className="fill-[#24324D] text-[2.875em] mb-[1rem]" />
+        <Player
+          autoplay
+          loop={false}
+          keepLastFrame={true}
+          src="/img/lottie/success.json"
+          style={{ height: "2.875rem", width: "2.875rem" }}
+        ></Player>
         <h2 className="font-bold text-[1.5625em] text-center leading-[1.2] mb-[1rem]">
           {orderContent
             .reduce((acc, cur) => acc + cur.count * cur.price, 0)
@@ -106,7 +128,9 @@ export default function PagePaymentComplete() {
         <p className="font-bold text-[1.25em] text-[#FFFFFF]">
           네이버 리뷰 이벤트 참여하기
         </p>
-        <p className="absolute right-[1.25em] font-bold text-[1.25em] text-[#FFFFFF]">→</p>
+        <p className="absolute right-[1.25em] font-bold text-[1.25em] text-[#FFFFFF]">
+          →
+        </p>
       </button>
       {/* <button
         className="mt-[2em] text-[16px] mx-auto py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[97.5%] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
