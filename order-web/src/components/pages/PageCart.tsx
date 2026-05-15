@@ -387,7 +387,7 @@ export default function PageCart({
             </ul>
           </div>
           <button
-            className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
+            className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em] active:opacity-80"
             onClick={() => {
               setIsPayModal(true);
             }}
@@ -435,7 +435,7 @@ export function OrderNotice({ store, onClose }: OrderNoticeProps) {
       </p>
       <div className="flex flex-row justify-between gap-x-[1em]">
         <button
-          className="w-full font-medium border border-[#171717] rounded-[0.25em] py-[0.5em] text-[#171717] bg-[#FFFFFF]"
+          className="w-full font-medium border border-[#171717] rounded-[0.25em] py-[0.5em] text-[#171717] bg-[#FFFFFF] active:opacity-80"
           onClick={() => {
             onClose();
           }}
@@ -443,7 +443,7 @@ export function OrderNotice({ store, onClose }: OrderNoticeProps) {
           닫기
         </button>
         <button
-          className="w-full font-medium border-0 rounded-[0.25em] py-[0.5em] text-[#FFFFFF] bg-[#222F4A]"
+          className="w-full font-medium border-0 rounded-[0.25em] py-[0.5em] text-[#FFFFFF] bg-[#222F4A] active:opacity-80"
           onClick={() => {
             // router.push(`/table/${store}/order-in-progress`); // 후결제
             router.push(`/table/${store}/payment/check-order`); // 선결제

@@ -108,7 +108,7 @@ export default function PagePaymentCheckOrder() {
           })}
         </ul>
         <button
-          className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em]"
+          className="text-[16px] fixed left-1/2 -translate-x-1/2 py-[0.46875em] bottom-[1em] rounded-[0.46875em] w-[90%] max-w-[calc(400px*0.9)] bg-[#222F4A] flex justify-center items-center gap-x-[0.9375em] active:opacity-80"
           onClick={() => {
             // router.push(``);
             router.push(`/table/store/order-in-progress`); //임시로 바로 결제 완료 했다치고 order-in-progress로 이동
