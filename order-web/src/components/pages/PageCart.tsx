@@ -150,7 +150,7 @@ export default function PageCart({
 
   return (
     <div className="w-full mb-[5em]">
-      {(myBasket.length <= 0 && memberBasket.length <= 0) ? (
+      {myBasket.length <= 0 && memberBasket.length <= 0 ? (
         <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-full flex flex-col justify-center items-center">
           <img
             className="w-[6.125em] object-contain"
@@ -161,7 +161,7 @@ export default function PageCart({
             장바구니가 비어있습니다.
           </h2>
           <button
-            className="bg-[#F0F0F0] font-semibold text-[1.25em] py-[0.625em] px-[2em] rounded-[0.375em]"
+            className="bg-[#F0F0F0] font-semibold text-[1.25rem] py-[0.625em] px-[2em] rounded-[0.375em]"
             onClick={() => {
               router.push(`/table/${resolvedParams.store}/menu/`);
             }}
@@ -171,26 +171,26 @@ export default function PageCart({
         </div>
       ) : (
         <div>
-          <div className="px-[1.5em]">
-            <h2 className="font-bold text-[1.25em] mb-[0.8em]">내 메뉴</h2>
+          <div className="px-[1.5em] pt-[2em]">
+            <h2 className="font-bold text-[1.25rem] mb-[0.8em]">내 메뉴</h2>
             {myBasket ? (
               <ul>
                 {myBasket.map((value, key) => (
                   <li
-                    className="pb-[1.5em] mb-[1.5em] border-b-1 border-b-[#F3F3F3]"
+                    className="pb-[1.5em] mb-[1.5em] last:mb-0 border-b-1 border-b-[#F3F3F3]"
                     key={key}
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-[1.25em] font-medium">
+                        <h3 className="text-[1rem] font-medium">
                           {value.product_name}
                         </h3>
-                        <p className="text-[1.25em] font-medium ">
+                        <p className="text-[1rem] font-medium ">
                           {value.price.toLocaleString()}원
                         </p>
                       </div>
                       <div
-                        className="text-[1.25em] bg-[#D9D9D9] inline-block rounded-full p-[0.25em] cursor-pointer"
+                        className="text-[1rem] bg-[#D9D9D9] inline-block rounded-full p-[0.25em] cursor-pointer"
                         onClick={() => removeItem("myBasket", key)}
                       >
                         <IoClose className="text-[#FFFFFF]" />
@@ -198,7 +198,7 @@ export default function PageCart({
                     </div>
                     <div className="flex justify-end items-stretch gap-x-[0.5em]">
                       <button
-                        className="font-semibold text-[1.125em] bg-[#F2F3F6] rounded-[0.75em] px-[0.8em]"
+                        className="font-semibold text-[1em] bg-[#F2F3F6] rounded-[0.75em] px-[0.8em]"
                         onClick={() => {
                           router.push(
                             `/table/${resolvedParams.store}/menu/${value.id}`,
@@ -207,22 +207,22 @@ export default function PageCart({
                       >
                         옵션변경
                       </button>
-                      <div className="text-[14px] flex items-center bg-[#F2F3F6] rounded-[0.75em] py-[0.3125em]">
+                      <div className="text-[0.875rem] flex items-center bg-[#F2F3F6] rounded-[0.75em] py-[0.3125em]">
                         <button
-                          className={`w-[2em] h-[2em] flex items-center justify-center text-[1.25em] ${value.count <= 1 ? "invisible" : ""}`}
+                          className={`w-[1.5em] h-[1.5em] flex items-center justify-center text-[1rem] ${value.count <= 1 ? "invisible" : ""}`}
                           onClick={() => handleCountChange("myBasket", key, -1)}
                         >
-                          <span className={`mb-1 `}>−</span>
+                          <span className={``}>−</span>
                         </button>
 
-                        <div className="bg-[#FFFFFF] h-[3em] w-[3em] rounded-[0.5em] shadow-sm shadow-[0_0.125em_0.25em_rgba(0,0,0,0.25)] min-w-[2.5em] flex items-center justify-center">
-                          <span className="text-[1.25em] font-semibold text-[#2D3436]">
+                        <div className="bg-[#FFFFFF] h-[2em] w-[2em] rounded-[0.5em] shadow-sm shadow-[0_0.125em_0.25em_rgba(0,0,0,0.25)] min-w-[2.5em] flex items-center justify-center">
+                          <span className="text-[1rem] font-semibold text-[#2D3436]">
                             {value.count}
                           </span>
                         </div>
 
                         <button
-                          className={`w-[2em] h-[2em] flex items-center justify-center text-[1.25em]`}
+                          className={`w-[1.5em] h-[1.5em] flex items-center justify-center text-[1rem]`}
                           onClick={() => handleCountChange("myBasket", key, 1)}
                         >
                           <span>+</span>
@@ -234,7 +234,7 @@ export default function PageCart({
               </ul>
             ) : (
               <div>
-                <p className="font-medium text-[1.25em] text-[#B4B4B4]">
+                <p className="font-medium text-[1.25rem] text-[#B4B4B4]">
                   담은 메뉴가 없어요
                 </p>
               </div>
@@ -242,35 +242,33 @@ export default function PageCart({
           </div>
           <hr className="h-[1em] bg-[#F2F3F6] border-0 mt-[1em] mb-[2em]" />
           <div className="px-[1.5em]">
-            <h2 className="font-bold text-[1.25em] mb-[0.8em]">멤버 메뉴</h2>
+            <h2 className="font-bold text-[1.25rem] mb-[0.8em]">멤버 메뉴</h2>
             {memberBasket ? (
               <ul className="">
                 {memberBasket.map((value, key) => (
                   <li
-                    className="pb-[1.5em] mb-[1.5em] border-b-1 border-b-[#F3F3F3]"
+                    className="pb-[1.5em] mb-[1.5em] last:mb-0 border-b-1 border-b-[#F3F3F3]"
                     key={key}
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-[1.25em] font-medium">
+                        <h3 className="text-[1rem] font-medium">
                           {value.product_name}
                         </h3>
-                        <p className="text-[1.25em] font-medium ">
+                        <p className="text-[1rem] font-medium ">
                           {value.price.toLocaleString()}원
                         </p>
                       </div>
                       <div
-                        className="text-[1.25em] bg-[#D9D9D9] inline-block rounded-full p-[0.25em] cursor-pointer"
-                        onClick={() => {
-                          removeItem("memberBasket", key);
-                        }}
+                        className="text-[1rem] bg-[#D9D9D9] inline-block rounded-full p-[0.25em] cursor-pointer"
+                        onClick={() => removeItem("memberBasket", key)}
                       >
                         <IoClose className="text-[#FFFFFF]" />
                       </div>
                     </div>
                     <div className="flex justify-end items-stretch gap-x-[0.5em]">
                       <button
-                        className="font-semibold text-[1.125em] bg-[#F2F3F6] rounded-[0.75em] px-[0.8em]"
+                        className="font-semibold text-[1em] bg-[#F2F3F6] rounded-[0.75em] px-[0.8em]"
                         onClick={() => {
                           router.push(
                             `/table/${resolvedParams.store}/menu/${value.id}`,
@@ -279,27 +277,23 @@ export default function PageCart({
                       >
                         옵션변경
                       </button>
-                      <div className="text-[14px] flex items-center bg-[#F2F3F6] rounded-[0.75em] py-[0.3125em]">
+                      <div className="text-[0.875rem] flex items-center bg-[#F2F3F6] rounded-[0.75em] py-[0.3125em]">
                         <button
-                          className={`w-[2em] h-[2em] flex items-center justify-center text-[1.25em] ${value.count <= 1 ? "invisible" : ""}`}
-                          onClick={() =>
-                            handleCountChange("memberBasket", key, -1)
-                          }
+                          className={`w-[1.5em] h-[1.5em] flex items-center justify-center text-[1rem] ${value.count <= 1 ? "invisible" : ""}`}
+                          onClick={() => handleCountChange("memberBasket", key, -1)}
                         >
-                          <span className={`mb-1 `}>−</span>
+                          <span className={``}>−</span>
                         </button>
 
-                        <div className="bg-[#FFFFFF] h-[3em] w-[3em] rounded-[0.5em] shadow-sm shadow-[0_0.125em_0.25em_rgba(0,0,0,0.25)] min-w-[2.5em] flex items-center justify-center">
-                          <span className="text-[1.25em] font-semibold text-[#2D3436]">
+                        <div className="bg-[#FFFFFF] h-[2em] w-[2em] rounded-[0.5em] shadow-sm shadow-[0_0.125em_0.25em_rgba(0,0,0,0.25)] min-w-[2.5em] flex items-center justify-center">
+                          <span className="text-[1rem] font-semibold text-[#2D3436]">
                             {value.count}
                           </span>
                         </div>
 
                         <button
-                          className={`w-[2em] h-[2em] flex items-center justify-center text-[1.25em]`}
-                          onClick={() =>
-                            handleCountChange("memberBasket", key, 1)
-                          }
+                          className={`w-[1.5em] h-[1.5em] flex items-center justify-center text-[1rem]`}
+                          onClick={() => handleCountChange("memberBasket", key, 1)}
                         >
                           <span>+</span>
                         </button>
@@ -313,9 +307,9 @@ export default function PageCart({
                 <p className="font-medium text-[#B4B4B4]">담은 메뉴가 없어요</p>
               </div>
             )}
-            <div className="text-center my-[1.375em]">
+            <div className="text-center my-[1em]">
               <Link
-                className="font-semibold text-[1.125em] text-[1.22222em]"
+                className="font-semibold text-[1rem]"
                 href={`/table/${resolvedParams.store}/menu`}
               >
                 메뉴 추가 +
