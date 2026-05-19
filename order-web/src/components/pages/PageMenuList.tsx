@@ -9,12 +9,14 @@ import { getStoreData } from "@/app/api/store";
 import storeDataSkeleton from "@/temp_data/storeDataSkeleton.json";
 import { StoreData, StoreMenuListData } from "@/types/store";
 import toast from "react-hot-toast";
+import {useAuthStore} from "@/store/useAuthStore"
 
 export default function PageMenuList({
   params,
 }: {
   params: Promise<{ store: string }>;
 }) {
+  const roomMembers = useAuthStore((state) => state.roomMembers)
   const resolvedParams = use(params);
   const store = decodeURIComponent(resolvedParams.store);
   const router = useRouter();
@@ -35,7 +37,7 @@ export default function PageMenuList({
   const [searchValue, setSearchValue] = useState("");
 
   const [orderDetails, setOrderDetails] = useState(2);
-  const [coViewerCount, setCoViewerCount] = useState(0);
+  // const [coViewerCount, setCoViewerCount] = useState(0);
   const [storeData, setStoreData] = useState<StoreData>(storeDataSkeleton);
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
 
@@ -196,22 +198,29 @@ export default function PageMenuList({
                 </button>
                 <div className="flex flex-row items-center gap-[0.5em] mt-[0.8em]">
                   <ul className="flex flex-row items-center -space-x-[0.5em]">
-                    <li className="flex items-center justify-center w-[1.6666667em] h-[1.6666667em] bg-[#D9D9D96E] rounded-full">
+                    {[...Array(Math.min(roomMembers, 3))].map((_, roomMembersKey) => {
+                      return(
+                        <li key={roomMembersKey} className="flex items-center justify-center w-[1.6666667em] h-[1.6666667em] bg-[#D9D9D96E] rounded-full">
+                          <img
+                            className="w-[0.8em]"
+                            src="/img/person_icon.png"
+                            alt=""
+                          />
+                        </li>
+
+                      )
+                    })}
+                    {/* <li className="flex items-center justify-center w-[1.6666667em] h-[1.6666667em] bg-[#D9D9D96E] rounded-full">
                       <img
                         className="w-[0.8em]"
                         src="/img/person_icon.png"
                         alt=""
                       />
-                    </li>
-                    <li className="flex items-center justify-center w-[1.6666667em] h-[1.6666667em] bg-[#D9D9D96E] rounded-full">
-                      <img
-                        className="w-[0.8em]"
-                        src="/img/person_icon.png"
-                        alt=""
-                      />
-                    </li>
+                    </li> */}
                   </ul>
-                  <p>{coViewerCount}명이 함께 주문하고 있어요!</p>
+                  <p>
+                    {roomMembers > 1 ? `${roomMembers}명이 함께 주문하고 있어요!` : "혼자 주문 하고 있어요!"}
+                  </p>
                 </div>
               </div>
               <div>
