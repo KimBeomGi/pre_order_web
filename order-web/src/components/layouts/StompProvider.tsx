@@ -3,13 +3,16 @@
 import { useEffect, createContext, useContext, useRef } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 
 // 다른 페이지나 컴포넌트에서 소켓을 쓸 수 있도록 Context 생성 (선택사항)
 const StompContext = createContext<Client | null>(null);
 
 export default function StompProvider({ children }: { children: React.ReactNode }) {
   const params = useParams()
+  const searchParams  = useSearchParams()
+  const tid = searchParams.get('tableid')
+
   const store = params?.store as string
   
   const tokenId = useAuthStore((state) => state.tokenId)

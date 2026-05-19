@@ -198,7 +198,7 @@ export default function PageMenuList({
                 </button>
                 <div className="flex flex-row items-center gap-[0.5em] mt-[0.8em]">
                   <ul className="flex flex-row items-center -space-x-[0.5em]">
-                    {[...Array(Math.min(roomMembers, 3))].map((_, roomMembersKey) => {
+                    {[...Array(Math.min(Math.max(roomMembers-1, 0), 3))].map((_, roomMembersKey) => {
                       return(
                         <li key={roomMembersKey} className="flex items-center justify-center w-[1.6666667em] h-[1.6666667em] bg-[#D9D9D96E] rounded-full">
                           <img
